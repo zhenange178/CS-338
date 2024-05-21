@@ -12,6 +12,7 @@ if ($conn->connect_error) {
 }
 
 // Create database
+echo "Initializing Database... <br>";
 $sql = "CREATE DATABASE IF NOT EXISTS testDB";
 if ($conn->query($sql) === TRUE) {
     echo "Database created successfully<br>";
@@ -73,8 +74,18 @@ if ($conn->query($sql) === TRUE) {
 <body>
     <form method="post">
         <button type="submit" name="view_entries">View All Entries</button>
-        <button type="submit" name="specify_score">Specify Score Threshold</button>
         <button type="submit" name="clear">Clear</button>
+    </form>
+    <form method="post">
+        <label>Name: <input type="text" name="name"></label><br>
+        <label>Score Threshold: <input type="number" name="score" step="0.1"></label><br>
+        <label>Threshold Type:
+            <select name="threshold_type">
+                <option value="min">Minimum</option>
+                <option value="max">Maximum</option>
+            </select>
+        </label><br>
+        <button type="submit" name="submit_search">Search</button>
     </form>
 
 <?php
@@ -93,38 +104,47 @@ if (isset($_POST['view_entries'])) {
     }
 }
 
-//score threshold
-if (isset($_POST['specify_score'])) {
-    // Display the threshold form
-    echo 'Display entries that meet a certain score threshold.<br>
-          <form method="post">
-            <label for="threshold">Enter Score Threshold:</label>
-            <input type="number" id="threshold" name="threshold" step="0.1" min="0" max="10">
-            <button type="submit" name="submit_threshold">Display Scores</button>
-          </form>';
+//clear all button
+if (isset($_POST['clear'])) {
+    echo "";
 }
 
-if (isset($_POST['submit_threshold'])) {
-    $threshold = $_POST['threshold'];
-    // Select and display data above the specified threshold
-    $sql = "SELECT uid, name, score FROM student WHERE score > ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("d", $threshold);
-    $stmt->execute();
-    $result = $stmt->get_result();
+//search form
+if (isset($_POST['submit_search'])) {
+    $name = $_POST['name'];
+    $score = $_POST['score'];
+    $thresholdType = $_POST['threshold_type'];
+
+    $sql = "SELECT uid, name, score FROM student WHERE ";
+    $conditions = [];
+
+    if (!empty($name)) {
+        $conditions[] = "name LIKE '%" . $conn->real_escape_string($name) . "%'";
+    }
+    if (!empty($score)) {
+        if ($thresholdType == "min") {
+            $conditions[] = "score >= " . floatval($score);
+        } else {
+            $conditions[] = "score <= " . floatval($score);
+        }
+    }
+
+    if (count($conditions) > 0) {
+        $sql .= implode(" AND ", $conditions);
+    } else {
+        $sql .= "1"; // Always true condition to fetch all if no filters are set
+    }
+
+    $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
+        echo "<p>Results:</p>";
         while($row = $result->fetch_assoc()) {
-            echo "uid: " . $row["uid"] . " - Name: " . $row["name"] . " - Score: " . $row["score"] . "<br>";
+            echo "UID: " . $row["uid"] . " - Name: " . $row["name"] . " - Score: " . $row["score"] . "<br>";
         }
     } else {
-        echo "No results for scores over " . $threshold . "<br>";
+        echo "No results found.<br>";
     }
-}
-
-//clear all button
-if (isset($_POST['view_entries'])) {
-    echo "";
 }
 $conn->close();
 ?>

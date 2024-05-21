@@ -29,7 +29,7 @@ Since MySQL is run on the local machine, all members must complete the installat
 
 ### Path Configuration
 Sometimes, the Path configuration to the MySQL and/or PHP installation is not set automatically. Edit the "Path" variable so it contains a path to both the `/bin/` folder under the installed `MySQL/MySQL Server 8.0` folder, as well as the main `PHP` folder that you extracted. Make sure to leave existing Path variables untouched.
-* On Windows: https://docs.oracle.com/cd/E83411_01/OREAD/creating-and-modifying-environment-variables-on-windows.htm
+* On Windows: https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/
 * On Mac: https://pimylifeup.com/macos-path-environment-variable/
 * On Linux: https://www.linuxjournal.com/content/how-set-or-modify-path-variable-linux
 

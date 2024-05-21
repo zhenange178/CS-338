@@ -1,4 +1,4 @@
-# 2024-mysql-338
+# CS-338
 MySQL database handling with PHP
 
 ## Requirements

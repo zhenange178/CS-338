@@ -43,7 +43,7 @@ For example, these are my newly added Path values.
 1. Configure the MySQL user. Open your terminal, type `mysql -u root -p`. When prompted, enter the root password that you set earlier. 
 2. Type the following two commands sequentially in the terminal (for now, please use only the username and password provided):
 
-    `CREATE USER ’user1’@’localhost’ IDENTIFIED BY ’password’;`
+    `CREATE USER 'user1'@'localhost' IDENTIFIED BY 'password';`
 
     `GRANT ALL PRIVILEGES ON *.* TO 'user1'@'localhost';`
 

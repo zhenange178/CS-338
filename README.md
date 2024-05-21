@@ -54,5 +54,5 @@ Great. Now you want to start the PHP/MySQL server. On your local machine, the st
 
 ## Current Features
 * "View All Entires": click to display the full test table.
-* "Specify Score Threshold": click to display all entires with a score higher than your specified value.
-* "Clear": clear the webpage of displayed table data.
+* "Clear": Clear the page.
+* Search: Search for specific entries using a full-match name and/or a specific score threshold. 

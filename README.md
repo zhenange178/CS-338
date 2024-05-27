@@ -17,15 +17,16 @@ Since MySQL is run on the local machine, all members must complete the installat
 #### PHP
 1. Navigate to PHP downloads: https://www.php.net/downloads.php and download the appropriate file. For Windows, click on "Windows downloads" and download the Thread Safe zip file (don't download the source code). Download and extract the files. Make note of where it is extracted.
 2. Navigate to the root folder of your PHP files. Look for `php.ini`. If instead you only find `php.ini-development` and/or `php.ini-production`, make a copy of `php.ini-development`, place it in the same folder, then rename it to `php.ini`. 
-3. Open `php.ini`. Enable the `mysqli` extension by looking for `extension=mysqli` and uncomment the line from the list of extensions (delete the leading semicolon), as shown:
+3. Open `php.ini`. Enable the `mysqli` extension by looking for `extension=mysqli` and uncomment the line from the list of extensions (delete the leading semicolon), as shown below. 
 
-    ![Usual location of mysqli extension](screenshots/extension_mysqli.png)
+    ![Usual location of said extensions](screenshots/extension_mysqli+openssl.png)
 
-4. In the same file, specify the extensions directory by looking for `extension_dir`. Uncomment one of the following lines according to your system. Typically, on Linux/Unix systems including Mac, uncomment `extension_dir = "./"`, on Windows systems, uncomment `extension_dir = "ext"`. Leave the other one commented.
+4. Do the same with the `openssl` extension. This should be located not far below the `mysql` extension, as shown above. 
+5. In the same file, specify the extensions directory by looking for `extension_dir`. Uncomment one of the following lines according to your system. Typically, on Linux/Unix systems including Mac, uncomment `extension_dir = "./"`, on Windows systems, uncomment `extension_dir = "ext"`. Leave the other one commented.
 
     ![Usual location of extension directory specification](screenshots/extension_dir.png)
 
-5. Save the `php.ini` file. You would likely need admin priveleges.
+6. Save the `php.ini` file. You would likely need admin priveleges.
 
 ### Path Configuration
 Sometimes, the Path configuration to the MySQL and/or PHP installation is not set automatically. Edit the "Path" variable so it contains a path to both the `/bin/` folder under the installed `MySQL/MySQL Server 8.0` folder, as well as the main `PHP` folder that you extracted. Make sure to leave existing Path variables untouched.
@@ -41,7 +42,7 @@ For example, these are my newly added Path values.
 ### Configuration
 #### MySQL
 1. Configure the MySQL user. Open your terminal, type `mysql -u root -p`. When prompted, enter the root password that you set earlier. 
-2. Type the following two commands sequentially in the terminal (for now, please use only the username and password provided):
+2. Type the following two commands sequentially in the terminal. Please use only the EXACT username and password provided ('user1' and 'password'):
 
     `CREATE USER 'user1'@'localhost' IDENTIFIED BY 'password';`
 

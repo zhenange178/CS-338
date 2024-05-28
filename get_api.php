@@ -1,4 +1,8 @@
 <?php
+ob_implicit_flush(1);
+while (ob_get_level()) {
+    ob_end_flush();
+}
 
 /**
  * getApiUrl
@@ -62,12 +66,14 @@ function apiByCategory($pageID, $categoryID, $pageLimitRatio = 0.1){
             echo "No products found or 'productList' key does not exist on page $page\n";
         }
     }
-
+    flush();
     return $allProducts;
 }
 
 // Call method for different categories and merge with full array
+$startTime = microtime(true);
 echo "Fetching product data from HM.com...\n<br/>";
+flush();
 $allCategoriesProducts = [];
 $allCategoriesProducts = array_merge($allCategoriesProducts, apiByCategory('ladies', 'ladies_all', 0.1));
 $allCategoriesProducts = array_merge($allCategoriesProducts, apiByCategory('men', 'men_all', 0.1));
@@ -81,11 +87,16 @@ $jsonProductList = json_encode($allCategoriesProducts, JSON_PRETTY_PRINT);
 // Save the JSON data to a file
 $fileName = 'hm_product_list.json';
 
+
 if (file_put_contents($fileName, $jsonProductList)) {
-    echo "Data successfully written to $fileName";
+    $endTime = microtime(true);
+    $executionTime = $endTime - $startTime;
+    
+    echo count($allCategoriesProducts) . " total products successfully written to $fileName in " . number_format($executionTime, 2) . " seconds<br>";
 } else {
     echo "Failed to write data to $fileName";
 }
 
+flush(); // Final flush
 // TODO: save the time called as another field: display "last fetched"
 ?>

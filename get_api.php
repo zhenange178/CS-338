@@ -72,9 +72,6 @@ function apiByCategory($pageID, $categoryID, $pageLimitRatio = 0.1){
     return $allProducts;
 }
 
-// Home button - this will probably be in the header once we have that
-echo '<a href="/" class="button">Return to Home</a> <br/><br/>';
-
 // Call method for different categories and merge with full array
 $startTime = microtime(true);
 echo "Fetching product data from HM.com...\n<br/>";
@@ -102,7 +99,7 @@ echo "Writing data...<br />";
 
 $jsonProductList = json_encode($finalData, JSON_PRETTY_PRINT);
 
-$fileName = 'hm_product_list.json';
+$fileName = 'data/hm_product_list.json';
 
 if (file_put_contents($fileName, $jsonProductList)) {
     $endTime = microtime(true);
@@ -114,7 +111,18 @@ if (file_put_contents($fileName, $jsonProductList)) {
     echo "Failed to write data to $fileName";
 }
 
-echo '<br/><a href="/data.php" title="Go to the Data Page">Return to Data Page</a><br/>';
-
 flush(); // Final flush
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <!-- Redirect to another page after 5 seconds -->
+    <meta http-equiv="refresh" content="5;url=/data.php">
+</head>
+<body>
+    <p>You will be redirected back to the Data page in 5 seconds. If not, <a href="/data.php">click here</a>.</p>
+</body>
+</html>

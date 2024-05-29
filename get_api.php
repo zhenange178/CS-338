@@ -4,6 +4,8 @@ while (ob_get_level()) {
     ob_end_flush();
 }
 
+set_time_limit(120); 
+
 /**
  * getApiUrl
  * Return the appropriate URL for the API request given page number and categories
@@ -70,6 +72,9 @@ function apiByCategory($pageID, $categoryID, $pageLimitRatio = 0.1){
     return $allProducts;
 }
 
+// Home button - this will probably be in the header once we have that
+echo '<a href="/" class="button">Return to Home</a> <br/><br/>';
+
 // Call method for different categories and merge with full array
 $startTime = microtime(true);
 echo "Fetching product data from HM.com...\n<br/>";
@@ -81,22 +86,35 @@ $allCategoriesProducts = array_merge($allCategoriesProducts, apiByCategory('baby
 $allCategoriesProducts = array_merge($allCategoriesProducts, apiByCategory('kids', 'kids_viewall', 0.1));
 $allCategoriesProducts = array_merge($allCategoriesProducts, apiByCategory('home', 'home_all', 0.1));
 
-// Encode all products into a new JSON string
-$jsonProductList = json_encode($allCategoriesProducts, JSON_PRETTY_PRINT);
+// Build and save JSON file
+$timeZone = 'America/New_York';
+date_default_timezone_set($timeZone);
+$dateTimeUpdated = date('Y-m-d H:i:s');
 
-// Save the JSON data to a file
+$finalData = [
+    'requestDateTime' => $dateTimeUpdated,
+    'timeZone'=> $timeZone,
+    'productCount' => count($allCategoriesProducts),
+    'products' => $allCategoriesProducts
+];
+
+echo "Writing data...<br />";
+
+$jsonProductList = json_encode($finalData, JSON_PRETTY_PRINT);
+
 $fileName = 'hm_product_list.json';
-
 
 if (file_put_contents($fileName, $jsonProductList)) {
     $endTime = microtime(true);
     $executionTime = $endTime - $startTime;
     
-    echo count($allCategoriesProducts) . " total products successfully written to $fileName in " . number_format($executionTime, 2) . " seconds<br>";
+    echo "<br />";
+    echo count($allCategoriesProducts) . " total products successfully retrieved and written to $fileName in " . number_format($executionTime, 2) . " seconds.<br>";
 } else {
     echo "Failed to write data to $fileName";
 }
 
+echo '<br/><a href="/data.php" title="Go to the Data Page">Return to Data Page</a><br/>';
+
 flush(); // Final flush
-// TODO: save the time called as another field: display "last fetched"
 ?>

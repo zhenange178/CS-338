@@ -6,12 +6,12 @@
     The data is stored in your local "hm_product_list" JSON file. One will be created if it doesn't already exist. Everytime you update the data (see below), your current data will be overwritten by the newest fetched data.
     <br/><br/>
     Local data last updated: <?php
-        $jsonData = json_decode(file_get_contents('data/hm_product_list.json'), true);
+        $jsonData = json_decode(file_get_contents('data_files/hm_product_list.json'), true);
         echo isset($jsonData['requestDateTime']) ? $jsonData['requestDateTime'] : 'Date not available';
     ?>
     <br />
     Number of products: <?php
-        $jsonData = json_decode(file_get_contents('data/hm_product_list.json'), true);
+        $jsonData = json_decode(file_get_contents('data_files/hm_product_list.json'), true);
         echo isset($jsonData['productCount']) ? $jsonData['productCount'] : 'Product count not available';
     ?>
     <p><a href="/data/hm_product_list.json" class="button" target="_blank" rel="noopener noreferrer">View Current Data</a> (Open new tab containing full JSON data)<br/></p>

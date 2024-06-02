@@ -14,7 +14,7 @@
         $jsonData = json_decode(file_get_contents('hm_product_list.json'), true);
         echo isset($jsonData['productCount']) ? $jsonData['productCount'] : 'Product count not available';
     ?>
-    <p><a href="/data/hm_product_list.json" class="button" target="_blank" rel="noopener noreferrer">View Current Data</a> (Open new tab containing full JSON data)<br/></p>
+    <p><a href="hm_product_list.json" class="button" target="_blank" rel="noopener noreferrer">View Current Data</a> (Open new tab containing full JSON data)<br/></p>
 
     <p><a href="get_api.php" class="button">Update Data</a> (Run the API Script to fetch newest data from H&M site)</p>
 

@@ -6,9 +6,11 @@
     <link rel="stylesheet" type="text/css" href="styles/global.css">
 </head>
 <body>
-    <div class="header">
-        <h1>
-            <p><a href="/" class="button" style="color: #E50010; text-decoration: none; transition: color 0.3s;">H&M Database Project</a> <br/></p>
-        </h1>
+    <header class="header-nav">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/initialize.php">Initialize</a></li>
+        </ul>
+    </header>
     </div>
     <div class="content">

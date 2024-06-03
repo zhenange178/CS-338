@@ -1,76 +1,24 @@
-<?php
-$servername = "127.0.0.1";
-$username = "user1";
-$password = "password"; 
+<?php include 'includes/header.php'; ?>
 
-// Create connection
-$conn = new mysqli($servername, $username, $password);
+    <div>
+        <h2>Initialization</h2>
+        <p>Product data is retrieved from H&M's website using an API, then stored locally. Once the data is fetched and saved, the database tables regarding product information will be reset. You can update this information whenever you like to keep the information up-to-date.</p>
+    </div>
+    <div class="rowcontainer">
+        <div style="width: 40%; margin-right: auto">
+            <div>    
+            <h3>Data Retrival</h3>
+                <p>If you would like to view current data or fetch the newest data, click below. Note that you will not see the changes before initializing the database.</p>
+            </div>
+            <div class="centerbutton">
+                <a href="/data.php">Data</a>
+            </div>
+        </div>
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+        <div style="width: 40%; margin-left: auto">
+            <h3>Database Initialization</h3>
+            <p>If you would like to reset the database, click here. <b>The local database and all previously changed data will be reset according to the current fetched raw data upon database initialization.</b> </p>
+        </div>
+    </div>
 
-// Create database
-echo "Initializing Database... <br>";
-$sql = "CREATE DATABASE IF NOT EXISTS hmProducts";
-if ($conn->query($sql) === TRUE) {
-    echo "Database created successfully<br>";
-} else {
-    echo "Error creating database: " . $conn->error . "<br>";
-}
-
-// Select the database
-$conn->select_db("hmProducts");
-
-// Drop existing table if it exists
-$dropQuery = "DROP TABLE IF EXISTS products";
-$conn->query($dropQuery);
-
-// Create new table
-$createQuery = "CREATE TABLE products (
-    product_id INT AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(255),
-    name VARCHAR(255),
-    stock_level INT,
-    price DECIMAL(10, 2),
-    currency VARCHAR(10),
-    image_url VARCHAR(255),
-    category_name VARCHAR(255),
-    color VARCHAR(100),
-    rgb_color VARCHAR(10)
-)";
-if ($conn->query($createQuery) === TRUE) {
-    echo "Table created successfully<br>";
-} else {
-    echo "Error creating table: " . $conn->error . "<br>";
-}
-
-// Read and decode JSON
-$jsonData = file_get_contents('hm_products_data.json');
-$products = json_decode($jsonData, true);
-
-// Iterate through products and insert into database
-foreach ($products['results'] as $product) {
-    // Check each key before using it to avoid errors
-    $code = isset($product['code']) ? $conn->real_escape_string($product['code']) : '';
-    $name = isset($product['name']) ? $conn->real_escape_string($product['name']) : '';
-    $stockLevel = isset($product['stock']['stockLevel']) ? $product['stock']['stockLevel'] : 0;
-    $price = isset($product['price']['value']) ? $product['price']['value'] : 0.0;
-    $currency = isset($product['price']['currencyIso']) ? $product['price']['currencyIso'] : 'USD';
-    $imageUrl = isset($product['images'][0]['url']) ? $conn->real_escape_string($product['images'][0]['url']) : '';
-    $categoryName = isset($product['categoryName']) ? $conn->real_escape_string($product['categoryName']) : '';
-    $color = isset($product['color']['text']) ? $conn->real_escape_string($product['color']['text']) : 'Unknown';
-    $rgbColor = isset($product['rgbColor']) ? $conn->real_escape_string($product['rgbColor']) : '000000';
-
-    // SQL query to insert data
-    $sql = "INSERT INTO products (code, name, stock_level, price, currency, image_url, category_name, color, rgb_color)
-            VALUES ('$code', '$name', $stockLevel, $price, '$currency', '$imageUrl', '$categoryName', '$color', '$rgbColor')";
-    if (!$conn->query($sql)) {
-        echo "Error: " . $conn->error . "<br>";
-    }
-}
-
-echo "Data inserted successfully!";
-$conn->close();
-?>
+<?php include 'includes/footer.php'; ?>

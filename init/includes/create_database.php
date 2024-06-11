@@ -3,6 +3,8 @@ $servername = "127.0.0.1";
 $username = "user1";
 $password = "password"; 
 
+echo "<h3>Creating Database</h3>";
+
 // Create connection
 $mysqli = new mysqli($servername, $username, $password);
 
@@ -12,15 +14,27 @@ if ($mysqli->connect_errno) {
     exit();
 }
 
-// Create database 
+// Check if exists, drop if needed, create. 
+$dbname = "hmdatabase"; 
+
+$result = $mysqli->query("SHOW DATABASES LIKE '$dbname'");
+$exists = $result->num_rows > 0;
+
+if ($exists) {
+    if ($mysqli->query("DROP DATABASE $dbname") === TRUE) {
+        echo "Old database dropped<br/>";
+    } else {
+        echo "Error dropping database: " . $mysqli->error . "<br/>";
+    }
+}
+
 if ($mysqli->query("CREATE DATABASE IF NOT EXISTS hmdatabase")) {
-    echo "Database created successfully<br />";
+    echo "Database created<br />";
 } else {
     echo "Error creating database: " . $mysqli->error;
 }
 
-// Select the database for use
-$mysqli->select_db("hmdatabase");
+$mysqli->select_db($dbname);
 
 /**
  * Create Tables
@@ -38,7 +52,7 @@ $sql = "CREATE TABLE IF NOT EXISTS products (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'products' created successfully<br />";
+    echo "Table 'products' created<br />";
 } else {
     echo "Error creating table 'products': " . $mysqli->error . "<br />";
 }
@@ -55,7 +69,7 @@ $sql = "CREATE TABLE IF NOT EXISTS customers (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'customers' created successfully<br />";
+    echo "Table 'customers' created<br />";
 } else {
     echo "Error creating table 'customers': " . $mysqli->error . "<br />";
 }
@@ -75,7 +89,7 @@ $sql = "CREATE TABLE IF NOT EXISTS memberships (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'memberships' created successfully<br />";
+    echo "Table 'memberships' created<br />";
 } else {
     echo "Error creating table 'memberships': " . $mysqli->error . "<br />";
 }
@@ -94,7 +108,7 @@ $sql = "CREATE TABLE IF NOT EXISTS orders (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'orders' created successfully<br />";
+    echo "Table 'orders' created<br />";
 } else {
     echo "Error creating table 'orders': " . $mysqli->error . "<br />";
 }
@@ -103,17 +117,23 @@ if ($mysqli->query($sql) === TRUE) {
 $sql = "CREATE TABLE IF NOT EXISTS reviews (
     reviewID INT PRIMARY KEY,
     customerID INT,
+    productID INT,
     rating INT NOT NULL,
     comment VARCHAR(255) NOT NULL,
     CONSTRAINT fk_customer_review
         FOREIGN KEY (customerID) 
         REFERENCES customers(customerID)
         ON DELETE SET NULL
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_product_review
+        FOREIGN KEY (productID) 
+        REFERENCES products(productID)
+        ON DELETE SET NULL
         ON UPDATE CASCADE
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'reviews' created successfully<br />";
+    echo "Table 'reviews' created<br />";
 } else {
     echo "Error creating table 'reviews': " . $mysqli->error . "<br />";
 }
@@ -131,7 +151,7 @@ $sql = "CREATE TABLE IF NOT EXISTS promoCodes (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'promoCodes' created successfully<br />";
+    echo "Table 'promoCodes' created<br />";
 } else {
     echo "Error creating table 'promoCodes': " . $mysqli->error . "<br />";
 }

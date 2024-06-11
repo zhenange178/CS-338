@@ -138,7 +138,7 @@ flush();
  */
 
 // Load product data from json
-$productData = json_decode(file_get_contents('../hm_product_list.json'), true)['products'];
+$productData = json_decode(file_get_contents('hm_product_list.json'), true)['products'];
 $productIds = array_map(function ($product) {
     return $product['id'];
 }, $productData);
@@ -200,9 +200,11 @@ $data = [
 
 // Encode data to JSON
 echo "Writing data...<br />";
+$jsonData = json_encode($data, JSON_PRETTY_PRINT);
+
 $fileName = 'mock_data.json';
-$jsonData = json_encode($fileName, JSON_PRETTY_PRINT);
-if(file_put_contents('mock_data.json', $jsonData)){
+
+if (file_put_contents($fileName, $jsonData)){
     echo "Mock data successfully generated and written to $fileName.<br/>";
 } else {
     echo "Failed to write data to $fileName<br />";

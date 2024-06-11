@@ -10,6 +10,14 @@ $idMembership = 200000;
 $idOrder = 300000;
 $idReview = 400000;
 
+/**
+ * randomDate
+ * Return a random date, used for birthday/expiration date generation
+ * 
+ * @param date $start_date earliest date to choose
+ * @param date $end_date latest date to choose
+ * @return date a random date between the two (inclusive)
+ */
 function randomDate($start_date, $end_date) {
     $min = strtotime($start_date);
     $max = strtotime($end_date);
@@ -17,6 +25,28 @@ function randomDate($start_date, $end_date) {
     return date('Y-m-d', $val);
 }
 
+/**
+ * randomDateTime
+ * Return a random date and time, used for orders date generation
+ * 
+ * @param date $start_date earliest date to choose
+ * @param date $end_date latest date to choose
+ * @return date a random date between the two (inclusive)
+ */
+function randomDateTime($start_date, $end_date) {
+    $min = strtotime($start_date);
+    $max = strtotime($end_date);
+    $val = rand($min, $max);
+    return date('Y-m-d H:i:s', $val); 
+}
+
+/**
+ * randomString
+ * Return a random string, used for promo code generation
+ * 
+ * @param int $length defaults 5, length of string to generate
+ * @return string random string chosen from digits 0-9, a-z, A-Z
+ */
 function randomString($length = 5) {
     $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     $charactersLength = strlen($characters);
@@ -27,6 +57,12 @@ function randomString($length = 5) {
     return $randomString;
 }
 
+/**
+ * randomDiscount
+ * Return a random discount type, used for promo code generation
+ * 
+ * @return string 'percent_off' or 'amount_off' with equal probability
+ */
 function randomDiscount(){
     if (rand(0,1)){
         return 'percent_off';
@@ -34,6 +70,11 @@ function randomDiscount(){
     return 'amount_off';
 }
 
+/**
+ * randomBoolean
+ * 
+ * @return boolean true or false with equal probability
+ */
 function randomBoolean() {
     return rand(0, 1) == 1;
 }
@@ -123,7 +164,7 @@ foreach ($customers as $customer) {
             'OrderID' => $orderId,
             'CustomerID' => $customer['ID'],
             'TrackingID' => rand(100000, 999999),
-            'DateTime' => randomDate('2020-01-01', '2024-05-31')
+            'DateTime' => randomDateTime('2020-01-01', '2024-05-31')
         ];
         $orders[] = $order;
         $orderId++;
@@ -174,7 +215,7 @@ $codes = [];
 for ($i = 0; $i < 300; $i++) {
     $code = [
         'PromoCode' => randomString(),
-        'Sour ce' => '',
+        'Source' => '',
         'TotalAvailable' => rand(10, 1000),
         'isMemberOnly' => randomBoolean(),
         'Expiration' => randomDate('2024-06-01', '2034-01-01'),

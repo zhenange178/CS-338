@@ -1,0 +1,211 @@
+<?php
+ob_implicit_flush(1);
+while (ob_get_level()) {
+    ob_end_flush();
+}
+
+// Define ID start values
+$idCustomer = 100000;
+$idMembership = 200000;
+$idOrder = 300000;
+$idReview = 400000;
+
+function randomDate($start_date, $end_date) {
+    $min = strtotime($start_date);
+    $max = strtotime($end_date);
+    $val = rand($min, $max);
+    return date('Y-m-d', $val);
+}
+
+function randomString($length = 5) {
+    $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[random_int(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
+
+function randomDiscount(){
+    if (rand(0,1)){
+        return 'percent_off';
+    }
+    return 'amount_off';
+}
+
+function randomBoolean() {
+    return rand(0, 1) == 1;
+}
+
+/**
+ * Generate Customers
+ */
+
+echo "<h3>Generating Mock Data</h3>";
+flush();
+
+// Name and location list for random
+$firstNames = ['James', 'Mary', 'John', 'Patricia', 'Robert', 'Jennifer', 'Michael', 'Linda', 'William', 'Elizabeth'];
+$lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
+$cityCountries = [
+    ['City' => 'New York', 'Country' => 'USA'],
+    ['City' => 'London', 'Country' => 'UK'],
+    ['City' => 'Tokyo', 'Country' => 'Japan'],
+    ['City' => 'Paris', 'Country' => 'France'],
+    ['City' => 'Sydney', 'Country' => 'Australia'],
+    ['City' => 'Berlin', 'Country' => 'Germany'],
+    ['City' => 'Moscow', 'Country' => 'Russia'],
+    ['City' => 'Toronto', 'Country' => 'Canada'],
+    ['City' => 'Beijing', 'Country' => 'China'],
+    ['City' => 'Sao Paulo', 'Country' => 'Brazil']
+];
+$streetNames = [
+    'Main', 'Second', 'Oak', 'Third', 'Park',
+    'Fifth', 'Maple', 'Mulberry', 'Sixth', 'Pine',
+    'Cedar', 'Eighth', 'Elm', 'View', 'Washington',
+    'Ninth', 'Lake', 'Hill'
+];
+
+// Generate mock customers
+$customers = [];
+for ($i = $idCustomer+1; $i <= $idCustomer+100; $i++) {
+    $firstName = $firstNames[array_rand($firstNames)];
+    $lastName = $lastNames[array_rand($lastNames)];
+    $cityCountry = $cityCountries[array_rand($cityCountries)];
+    $streetName = $streetNames[array_rand($streetNames)];
+    $customer = [
+        'ID' => $i,
+        'Birth' => randomDate('1950-01-01', '2000-12-31'),
+        'Phone' => '+1-' . rand(200, 999) . '-' . rand(100, 999) . '-' . rand(1000, 9999),
+        'Address' => rand(1, 100) . ' ' . $streetName . ', ' . $cityCountry['City'] . ', ' . $cityCountry['Country'],
+        'Email' => strtolower($firstName . '.' . $lastName . '@example.com'),
+        'FName' => $firstName,
+        'LName' => $lastName
+    ];
+    $customers[] = $customer;
+}
+
+echo 'Generated ' . count($customers) . ' mock customers.<br/>';
+flush();
+
+/**
+ * Generate Memberships
+ */
+$memberships = [];
+foreach ($customers as $customer) {
+    if (rand(0,2)){ // Randomly decide to add membership
+        $membership = [
+            'MemberID' => ++$idMembership,
+            'CustomerID' => $customer['ID'],
+            'Price' => rand(1,99),
+            'Expiration' => randomDate('2024-06-01', '2034-01-01'),
+            'Rank' => rand(1,6),
+        ];
+        $memberships[] = $membership;
+    }
+} 
+
+echo 'Generated ' . count($memberships) . ' mock memberships.<br/>';
+flush();
+
+/**
+ * Generate Orders
+ */
+
+// Generate mock orders
+$orders = [];
+$orderId = $idOrder + 1;
+foreach ($customers as $customer) {
+    $numOrders = rand(0, 5); // Each customer can have between 0 and 5 orders
+    for ($j = 0; $j < $numOrders; $j++) {
+        $order = [
+            'OrderID' => $orderId,
+            'CustomerID' => $customer['ID'],
+            'TrackingID' => rand(100000, 999999),
+            'DateTime' => randomDate('2020-01-01', '2024-05-31')
+        ];
+        $orders[] = $order;
+        $orderId++;
+    }
+}
+
+echo 'Generated ' . count($orders) . ' mock orders.<br/>';
+flush();
+
+/**
+ * Generate Reviews
+ */
+
+// Load product data from json
+$productData = json_decode(file_get_contents('../hm_product_list.json'), true)['products'];
+$productIds = array_map(function ($product) {
+    return $product['id'];
+}, $productData);
+
+// Generate review data
+$reviews = [];
+foreach ($customers as $customer) {
+    $numReviews = rand(0, 3);  // Each customer can have between 0 and 3 reviews
+    for ($i = 0; $i < $numReviews; $i++) {
+        $review = [
+            'ReviewID' => ++$idReview,
+            'CustomerID' => $customer['ID'],
+            'Rating' => rand(1, 5),  // Random rating out of 5
+            'Comment' => '',  // Assume blank comments for simplicity
+            'ProductID' => $productIds[array_rand($productIds)]  // Random product ID from the list
+        ];
+        if (rand(0, 1)) {  // Randomly decide to add a comment
+            $review['Comment'] = 'Sample comment for product ID ' . $review['ProductID'];
+        }
+        $reviews[] = $review;
+    }
+}
+
+echo 'Generated ' . count($reviews) . ' mock reviews.<br/>';
+flush();
+
+/**
+ * Generate Promo Codes
+ */
+
+// Generate codes data
+$codes = [];
+for ($i = 0; $i < 300; $i++) {
+    $code = [
+        'PromoCode' => randomString(),
+        'Sour ce' => '',
+        'TotalAvailable' => rand(10, 1000),
+        'isMemberOnly' => randomBoolean(),
+        'Expiration' => randomDate('2024-06-01', '2034-01-01'),
+        'DiscountType' => randomDiscount(),
+        'DiscountAmount' => rand(5, 50),
+        'RestrictionAmount' => rand(50, 150)
+    ];
+    $codes[] = $code;
+}
+
+echo 'Generated ' . count($codes) . ' mock promo codes.<br/>';
+flush();
+
+
+// Prepare combined data
+$data = [
+    'customers' => $customers,
+    'memberships' => $memberships,
+    'orders' => $orders,
+    'reviews' => $reviews,
+    'promoCodes' => $codes
+];
+
+// Encode data to JSON
+echo "Writing data...<br />";
+$fileName = 'mock_data.json';
+$jsonData = json_encode($fileName, JSON_PRETTY_PRINT);
+if(file_put_contents('mock_data.json', $jsonData)){
+    echo "Mock data successfully generated and written to $fileName.<br/>";
+} else {
+    echo "Failed to write data to $fileName<br />";
+}
+flush();
+?>

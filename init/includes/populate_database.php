@@ -34,6 +34,18 @@ function importProducts($mysqli, $productsData) {
     $stmt->close();
 }
 
+function importProductCategories($mysqli, $customersData){
+    // TODO: populate categories Table
+}
+
+function importColors($mysqli, $customersData){
+    // TODO: populate colors Table
+}
+
+function importPrices($mysqli, $customersData){
+    // TODO: populate prices Table
+}
+
 function importCustomers($mysqli, $customersData) {
     $stmt = $mysqli->prepare("INSERT IGNORE INTO customers (customerID, customerBirth, customerPhone, customerAddress, customerEmail, firstName, lastName) VALUES (?, ?, ?, ?, ?, ?, ?)");
     
@@ -181,6 +193,11 @@ $productsData = readJson('hm_product_list.json');
 $mockData = readJson('mock_data.json');
 
 importProducts($mysqli, $productsData);
+
+// importProductCategories($mysqli, $productsData);
+// importColors($mysqli, $productsData);
+// importPrices($mysqli, $productsData);
+
 importCustomers($mysqli, $mockData);
 importMemberships($mysqli, $mockData);
 importOrders($mysqli, $mockData);

@@ -48,13 +48,72 @@ $sql = "CREATE TABLE IF NOT EXISTS products (
     productWeight FLOAT,
     sellingAttribute VARCHAR(255),
     stock VARCHAR(255) NOT NULL,
-    comingSoon BOOLEAN NOT NULL
+    comingSoon BOOLEAN NOT NULL,
+    isMen BOOLEAN NOT NULL,
+    isWomen BOOLEAN NOT NULL,
+    isKids BOOLEAN NOT NULL 
 )";
 
 if ($mysqli->query($sql) === TRUE) {
     echo "Table 'products' created<br />";
 } else {
     echo "Error creating table 'products': " . $mysqli->error . "<br />";
+}
+
+$sql = "CREATE TABLE IF NOT EXISTS productCategories (
+    productID INT PRIMARY KEY,
+    primaryCategory VARCHAR(255) NOT NULL,
+    secondaryCategory VARCHAR(255),
+    tertiaryCategory VARCHAR(255),
+    CONSTRAINT fk_product_category
+        FOREIGN KEY (productID) 
+        REFERENCES products(productID)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+)";
+
+if ($mysqli->query($sql) === TRUE) {
+    echo "Table 'productCategories' created<br />";
+} else {
+    echo "Error creating table 'productCategories': " . $mysqli->error . "<br />";
+}
+
+// Create Product/color Table
+$sql = "CREATE TABLE IF NOT EXISTS productColors (
+    articleID INT PRIMARY KEY,
+    productID INT,
+    colorName VARCHAR(255) NOT NULL,
+    colorCode VARCHAR(255) NOT NULL,
+    articleImage VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_product_color
+        FOREIGN KEY (productID) 
+        REFERENCES products(productID)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+)";
+
+if ($mysqli->query($sql) === TRUE) {
+    echo "Table 'productColors' created<br />";
+} else {
+    echo "Error creating table 'productColors': " . $mysqli->error . "<br />";
+}
+
+// Create Product/price Table
+$sql = "CREATE TABLE IF NOT EXISTS productPrices (
+    articleID INT PRIMARY KEY,
+    priceType VARCHAR(255) NOT NULL,
+    price FLOAT NOT NULL,
+    CONSTRAINT fk_article_price
+        FOREIGN KEY (articleID) 
+        REFERENCES productColors(articleID)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+)";
+
+if ($mysqli->query($sql) === TRUE) {
+    echo "Table 'productPrices' created<br />";
+} else {
+    echo "Error creating table 'productPrices': " . $mysqli->error . "<br />";
 }
 
 // Create Customer Table

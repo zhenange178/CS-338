@@ -3,7 +3,8 @@ $servername = "127.0.0.1";
 $username = "user1";
 $password = "password"; 
 
-echo "<h3>Creating Database</h3>";
+$startTime = microtime(true);
+echo "<b>Initializing Database...</b><br />";
 
 // Create connection
 $mysqli = new mysqli($servername, $username, $password);
@@ -40,6 +41,9 @@ $mysqli->select_db($dbname);
  * Create Tables
  */
 
+$tablesCreated = true;
+echo "Creating tables...<br/>";
+
 // Create Product Table
 $sql = "CREATE TABLE IF NOT EXISTS products (
     productID INT PRIMARY KEY,
@@ -52,9 +56,10 @@ $sql = "CREATE TABLE IF NOT EXISTS products (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'products' created<br />";
+    // echo "Table 'products' created<br />";
 } else {
     echo "Error creating table 'products': " . $mysqli->error . "<br />";
+    $tablesCreated = false;
 }
 
 $sql = "CREATE TABLE IF NOT EXISTS productCategories (
@@ -69,9 +74,10 @@ $sql = "CREATE TABLE IF NOT EXISTS productCategories (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'productCategories' created<br />";
+    // echo "Table 'productCategories' created<br />";
 } else {
     echo "Error creating table 'productCategories': " . $mysqli->error . "<br />";
+    $tablesCreated = false;
 }
 
 // Create Product/color Table
@@ -89,9 +95,10 @@ $sql = "CREATE TABLE IF NOT EXISTS productColors (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'productColors' created<br />";
+    // echo "Table 'productColors' created<br />";
 } else {
     echo "Error creating table 'productColors': " . $mysqli->error . "<br />";
+    $tablesCreated = false;
 }
 
 // Create Product/price Table
@@ -107,9 +114,10 @@ $sql = "CREATE TABLE IF NOT EXISTS productPrices (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'productPrices' created<br />";
+    // echo "Table 'productPrices' created<br />";
 } else {
     echo "Error creating table 'productPrices': " . $mysqli->error . "<br />";
+    $tablesCreated = false;
 }
 
 // Create Customer Table
@@ -124,9 +132,10 @@ $sql = "CREATE TABLE IF NOT EXISTS customers (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'customers' created<br />";
+    // echo "Table 'customers' created<br />";
 } else {
     echo "Error creating table 'customers': " . $mysqli->error . "<br />";
+    $tablesCreated = false;
 }
 
 // Create membership Table
@@ -144,9 +153,10 @@ $sql = "CREATE TABLE IF NOT EXISTS memberships (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'memberships' created<br />";
+    // echo "Table 'memberships' created<br />";
 } else {
     echo "Error creating table 'memberships': " . $mysqli->error . "<br />";
+    $tablesCreated = false;
 }
 
 // Create orders Table
@@ -163,9 +173,10 @@ $sql = "CREATE TABLE IF NOT EXISTS orders (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'orders' created<br />";
+    // echo "Table 'orders' created<br />";
 } else {
     echo "Error creating table 'orders': " . $mysqli->error . "<br />";
+    $tablesCreated = false;
 }
 
 // Create reviews Table
@@ -188,9 +199,10 @@ $sql = "CREATE TABLE IF NOT EXISTS reviews (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'reviews' created<br />";
+    // echo "Table 'reviews' created<br />";
 } else {
     echo "Error creating table 'reviews': " . $mysqli->error . "<br />";
+    $tablesCreated = false;
 }
 
 // Create promo codes Table
@@ -206,9 +218,22 @@ $sql = "CREATE TABLE IF NOT EXISTS promoCodes (
 )";
 
 if ($mysqli->query($sql) === TRUE) {
-    echo "Table 'promoCodes' created<br />";
+    // echo "Table 'promoCodes' created<br />";
 } else {
     echo "Error creating table 'promoCodes': " . $mysqli->error . "<br />";
+    $tablesCreated = false;
 }
+
+// finish
+if ($tablesCreated) {
+    $endTime = microtime(true);
+    $executionTime = $endTime - $startTime;
+
+    echo "All tables created in " . number_format($executionTime, 2) . " seconds.<br /><br />";
+} else {
+    echo "There were errors creating some tables.<br /><br />";
+}
+
+$mysqli->close();
 
 ?>

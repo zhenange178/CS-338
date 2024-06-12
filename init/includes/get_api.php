@@ -72,13 +72,9 @@ function apiByCategory($pageID, $categoryID, $pageLimitRatio = 0.1){
     return $allProducts;
 }
 
-//echo "<div style='margin:10px'>";
-
-
 // Call method for different categories and merge with full array
 $startTime = microtime(true);
-echo "<h3>Updating Product Data</h3>";
-echo 'Fetching newest data from HM.com:<br />';
+echo '<b>Fetching newest product data from HM.com...</b><br />';
 flush();
 $allCategoriesProducts = [];
 $allCategoriesProducts = array_merge($allCategoriesProducts, apiByCategory('ladies', 'ladies_all', 0.1));
@@ -109,9 +105,9 @@ if (file_put_contents($fileName, $jsonProductList)) {
     $endTime = microtime(true);
     $executionTime = $endTime - $startTime;
     
-    echo count($allCategoriesProducts) . " total products successfully retrieved and written to $fileName in " . number_format($executionTime, 2) . " seconds.<br>";
+    echo count($allCategoriesProducts) . " total products successfully retrieved and written to $fileName in " . number_format($executionTime, 2) . " seconds.<br /><br />";
 } else {
-    echo "Failed to write data to $fileName";
+    echo "Failed to write data to $fileName<br /><br />";
 }
 //echo "</div>";
 

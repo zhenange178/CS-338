@@ -79,12 +79,13 @@ function randomBoolean() {
     return rand(0, 1) == 1;
 }
 
+$startTime = microtime(true);
+echo "<b>Generating Mock Data...</b><br />";
+flush();
+
 /**
  * Generate Customers
  */
-
-echo "<h3>Generating Mock Data</h3>";
-flush();
 
 // Name and location list for random
 $firstNames = ['James', 'Mary', 'John', 'Patricia', 'Robert', 'Jennifer', 'Michael', 'Linda', 'William', 'Elizabeth'];
@@ -127,7 +128,7 @@ for ($i = $idCustomer+1; $i <= $idCustomer+100; $i++) {
     $customers[] = $customer;
 }
 
-echo 'Generated ' . count($customers) . ' mock customers.<br/>';
+echo 'Generated ' . count($customers) . ' customers, ';
 flush();
 
 /**
@@ -147,7 +148,7 @@ foreach ($customers as $customer) {
     }
 } 
 
-echo 'Generated ' . count($memberships) . ' mock memberships.<br/>';
+echo count($memberships) . ' memberships, ';
 flush();
 
 /**
@@ -171,7 +172,7 @@ foreach ($customers as $customer) {
     }
 }
 
-echo 'Generated ' . count($orders) . ' mock orders.<br/>';
+echo count($orders) . ' orders, ';
 flush();
 
 /**
@@ -203,7 +204,7 @@ foreach ($customers as $customer) {
     }
 }
 
-echo 'Generated ' . count($reviews) . ' mock reviews.<br/>';
+echo count($reviews) . ' reviews, ';
 flush();
 
 /**
@@ -226,7 +227,7 @@ for ($i = 0; $i < 300; $i++) {
     $codes[] = $code;
 }
 
-echo 'Generated ' . count($codes) . ' mock promo codes.<br/>';
+echo count($codes) . ' promo codes.<br/>';
 flush();
 
 
@@ -246,9 +247,12 @@ $jsonData = json_encode($data, JSON_PRETTY_PRINT);
 $fileName = 'mock_data.json';
 
 if (file_put_contents($fileName, $jsonData)){
-    echo "Mock data successfully generated and written to $fileName.<br/>";
+    $endTime = microtime(true);
+    $executionTime = $endTime - $startTime;
+
+    echo "Mock data successfully generated and written to $fileName in " . number_format($executionTime, 2) . " seconds.<br/ ><br />";
 } else {
-    echo "Failed to write data to $fileName<br />";
+    echo "Failed to write data to $fileName<br /><br />";
 }
 flush();
 ?>

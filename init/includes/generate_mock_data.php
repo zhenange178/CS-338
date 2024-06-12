@@ -180,7 +180,7 @@ flush();
  */
 
 // Load product data from json
-$productData = json_decode(file_get_contents('hm_product_list.json'), true)['products'];
+$productData = json_decode(file_get_contents('data/hm_product_list.json'), true)['products'];
 $productIds = array_map(function ($product) {
     return $product['id'];
 }, $productData);
@@ -244,7 +244,7 @@ $data = [
 echo "Writing data...<br />";
 $jsonData = json_encode($data, JSON_PRETTY_PRINT);
 
-$fileName = 'mock_data.json';
+$fileName = 'data/mock_data.json';
 
 if (file_put_contents($fileName, $jsonData)){
     $endTime = microtime(true);

@@ -37,6 +37,7 @@ $populator->importCustomers($mysqli, $mockData);
 $populator->importMemberships($mysqli, $mockData);
 $populator->importOrders($mysqli, $mockData);
 $populator->importReviews($mysqli, $mockData);
+$populator->importPromoCodes($mysqli, $mockData);
 
 $endTime = microtime(true);
 $executionTime = $endTime - $startTime;

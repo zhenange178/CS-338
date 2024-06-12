@@ -4,6 +4,8 @@ while (ob_get_level()) {
     ob_end_flush();
 }
 
+set_time_limit(120);
+
 // Define ID start values
 $idCustomer = 100000;
 $idMembership = 200000;

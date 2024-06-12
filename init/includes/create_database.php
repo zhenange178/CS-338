@@ -7,6 +7,8 @@ while (ob_get_level()) {
     ob_end_flush();
 }
 
+set_time_limit(120);
+
 $servername = "127.0.0.1";
 $username = "user1";
 $password = "password"; 

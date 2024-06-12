@@ -3,5 +3,5 @@
 <?php include '../init/includes/get_api.php'; ?>
 <?php include '../init/includes/create_database.php'; ?>
 <?php include '../init/includes/populate_database.php'; ?>
-<!-- <?php include '../init/includes/redirect.php'; ?> -->
+<?php include '../init/includes/redirect.php'; ?>
 </div>

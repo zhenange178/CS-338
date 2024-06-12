@@ -41,7 +41,7 @@
 <div>
     <h3>Development: Initialize Sample</h3>
     Same as the first full reset option above, but using smaller and static data files for development purposes.<br/>
-    Data comes from <code>/init/data/SAMPLE_hm_product_list.json</code> and <code>/init/data/SAMPLE_mock_data_list.json</code>. Make sure both files exist and contain data.<br/>
+    Data are stored in <code>init/data/SAMPLE_hm_product_list.json</code> and <code>init/data/SAMPLE_mock_data_list.json</code>. Make sure both files exist and contain data.<br/>
     The <code>sampledatabase</code> database will be initialized and used to store this sample data, in the exact same format.
     <br/><br/>
     <?php

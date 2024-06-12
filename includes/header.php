@@ -10,6 +10,8 @@
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/initialize.php">Initialize</a></li>
+            <li><a href="/features_sample.php">Features (Sample)</a></li>
+            <li><a href="/features_production.php">Features (Production)</a></li>
         </ul>
     </header>
     </div>

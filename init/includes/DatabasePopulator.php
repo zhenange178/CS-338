@@ -182,6 +182,32 @@ class DatabasePopulator {
         $stmt->close();
     }
 
+    public function importReturnedOrders($mysqli, $ordersData) {
+        $stmt = $mysqli->prepare("INSERT IGNORE INTO returnedOrders (orderID, returnDateTime, returnReason) VALUES (?, ?, ?)");
+        
+        if ($stmt === false) {
+            die('MySQL prepare error: ' . $mysqli->error);
+        }
+
+        foreach ($ordersData['orders'] as $order) {
+            $stmt->bind_param("iiis",
+                $order['OrderID'],
+                $order['CustomerID'],
+                $order['TrackingID'],
+                $order['DateTime']
+            );
+
+            if (!$stmt->execute()) {
+                echo "Error importing order with ID {$order['OrderID']}: " . $stmt->error . "<br/>";
+            } else {
+                // echo "Order with ID {$order['OrderID']} imported successfully.<br/>";
+            }
+        }
+
+        //echo "Orders imported successfully.<br/>";
+        $stmt->close();
+    }
+
     public function importReviews($mysqli, $reviewsData) {
         $stmt = $mysqli->prepare("INSERT IGNORE INTO reviews (reviewID, customerID, productID, rating, comment) VALUES (?, ?, ?, ?, ?)");
         

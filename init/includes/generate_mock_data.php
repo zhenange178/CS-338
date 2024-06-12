@@ -81,6 +81,17 @@ function randomBoolean() {
     return rand(0, 1) == 1;
 }
 
+function randomReason() {
+    $reasons = [
+        'Defective item',
+        'Wrong item shipped',
+        'Item not as described',
+        'Changed mind',
+        'Found a better price',
+    ];
+    return $reasons[array_rand($reasons)];
+}
+
 $startTime = microtime(true);
 echo "<b>Generating Mock Data...</b><br />";
 flush();
@@ -167,8 +178,16 @@ foreach ($customers as $customer) {
             'OrderID' => $orderId,
             'CustomerID' => $customer['ID'],
             'TrackingID' => rand(100000, 999999),
-            'DateTime' => randomDateTime('2020-01-01', '2024-05-31')
+            'DateTime' => randomDateTime('2020-01-01', '2022-12-31'),
         ];
+
+        $isReturned = (bool)rand(0, 1);
+        if ($isReturned) {
+            $order['returned'] = [
+                'returnDateTime' => randomDateTime('2023-01-01', '2024-05-31'),
+                'returnReason' => randomReason()
+            ];
+        }
         $orders[] = $order;
         $orderId++;
     }

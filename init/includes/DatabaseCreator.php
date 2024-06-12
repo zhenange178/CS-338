@@ -166,6 +166,25 @@ class DatabaseCreator{
             $tablesCreated = false;
         }
 
+        // Create orders Table
+        $sql = "CREATE TABLE IF NOT EXISTS returnedOrders (
+            orderID INT,
+            returnDateTime DATETIME NOT NULL,
+            returnReason VARCHAR(255),
+            CONSTRAINT fk_order_return
+                FOREIGN KEY (orderID) 
+                REFERENCES orders(orderID)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE
+        )";
+
+        if ($mysqli->query($sql) === TRUE) {
+            // echo "Table 'returnedOrders' created<br />";
+        } else {
+            echo "Error creating table 'returnedOrders': " . $mysqli->error . "<br />";
+            $tablesCreated = false;
+        }
+
         // Create reviews Table
         $sql = "CREATE TABLE IF NOT EXISTS reviews (
             reviewID INT PRIMARY KEY,

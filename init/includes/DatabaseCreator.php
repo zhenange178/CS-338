@@ -16,7 +16,7 @@ class DatabaseCreator{
             }
         }
 
-        if ($mysqli->query("CREATE DATABASE IF NOT EXISTS $dbname") === TRUE) {
+        if ($mysqli->query("CREATE DATABASE $dbname") === TRUE) {
             echo "Database created: '" . $dbname . "'<br />";
         } else {
             echo "Error creating database: " . $mysqli->error;

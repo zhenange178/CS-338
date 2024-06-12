@@ -26,24 +26,110 @@ function readJson($filename) {
 // Import data functions
 function importProducts($mysqli, $productsData) {
     $stmt = $mysqli->prepare("INSERT IGNORE INTO products (productID, productName, productURL, productWeight, sellingAttribute, stock, comingSoon) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    
+    if ($stmt === false) {
+        die('MySQL prepare error: ' . $mysqli->error);
+    }
+    
     foreach ($productsData['products'] as $product) {
-        $stmt->bind_param("issdssi", $product['id'], $product['productName'], $product['url'], $product['quantity'], $product['sellingAttribute'], $product['availability']['stockState'], $product['availability']['comingSoon']);
+        $stmt->bind_param("issdssi",
+            $product['id'],
+            $product['productName'],
+            $product['url'],
+            $product['quantity'],
+            $product['sellingAttribute'],
+            $product['availability']['stockState'],
+            $product['availability']['comingSoon']
+        );
         $stmt->execute();
     }
     echo "Products imported successfully.<br/>";
     $stmt->close();
 }
 
-function importProductCategories($mysqli, $customersData){
-    // TODO: populate categories Table
+function importProductCategories($mysqli, $productsData){
+    $stmt = $mysqli->prepare("INSERT IGNORE INTO productCategories (productID, category, categoryType) VALUES (?, ?, ?)");
+
+    if ($stmt === false) {
+        die('MySQL prepare error: ' . $mysqli->error);
+    }
+
+    foreach ($productsData['products'] as $product) {
+        
+        if (!isset($product['mainCatCode'])) {
+            continue;
+        }
+
+        $categoryString = $product['mainCatCode'];
+        $categories = explode('_', $categoryString);
+
+        for ($i = 0; $i < count($categories); $i++){
+            $stmt->bind_param("isi",
+                $product['id'],
+                $categories[$i],
+                $i
+            );
+            $stmt->execute();
+        }
+    }
+    echo "Product Categories imported successfully.<br/>";
+    $stmt->close();
 }
 
-function importColors($mysqli, $customersData){
+function importColors($mysqli, $productsData){
     // TODO: populate colors Table
+    $stmt = $mysqli->prepare("INSERT IGNORE INTO productColors (articleID, productID, colorName, colorCode, articleImage) VALUES (?, ?, ?, ?, ?)");
+
+    if ($stmt === false) {
+        die('MySQL prepare error: ' . $mysqli->error);
+    }
+
+    foreach ($productsData['products'] as $product) {
+        
+        if (!isset($product['swatches'])) {
+            continue;
+        }
+
+        foreach ($product['swatches'] as $color){
+            $stmt->bind_param("iisss",
+                $color['articleId'],
+                $product['id'],
+                $color['colorName'],
+                $color['colorCode'],
+                $color['productImage']
+            );
+            $stmt->execute();
+        }
+    }
+    echo "Product Colors imported successfully.<br/>";
+    $stmt->close();
 }
 
-function importPrices($mysqli, $customersData){
+function importPrices($mysqli, $productsData){
     // TODO: populate prices Table
+    $stmt = $mysqli->prepare("INSERT IGNORE INTO productPrices (productID, priceType, price) VALUES (?, ?, ?)");
+
+    if ($stmt === false) {
+        die('MySQL prepare error: ' . $mysqli->error);
+    }
+
+    foreach ($productsData['products'] as $product) {
+        
+        if (!isset($product['prices'])) {
+            continue;
+        }
+
+        foreach ($product['prices'] as $price){
+            $stmt->bind_param("isd",
+                $product['id'],
+                $price['priceType'],
+                $price['price']
+            );
+            $stmt->execute();
+        }
+    }
+    echo "Product Prices imported successfully.<br/>";
+    $stmt->close();
 }
 
 function importCustomers($mysqli, $customersData) {
@@ -193,11 +279,9 @@ $productsData = readJson('hm_product_list.json');
 $mockData = readJson('mock_data.json');
 
 importProducts($mysqli, $productsData);
-
-// importProductCategories($mysqli, $productsData);
-// importColors($mysqli, $productsData);
-// importPrices($mysqli, $productsData);
-
+importProductCategories($mysqli, $productsData);
+importColors($mysqli, $productsData);
+importPrices($mysqli, $productsData);
 importCustomers($mysqli, $mockData);
 importMemberships($mysqli, $mockData);
 importOrders($mysqli, $mockData);

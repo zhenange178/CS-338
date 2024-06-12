@@ -76,12 +76,12 @@ CS-338/
 │   │   ├── DatabasePopulator.php
 │   │   ├── populate_database_all.php
 │   │   ├── ... 
-│   │   ├── redirect.php # auto redirect after running
-│   ├── data/
-│   │   ├── hm_product_list.json # stores updated product data
-│   │   ├── mock_data.json # stores generated mock data
-│   │   ├── SAMPLE_hm_product_list.json # static sample product data
-│   │   ├── SAMPLE_mock_data.json # static sample mock data
+│   │   ├── redirect.php # auto redirect after running scripts
+│   ├── data/ # JSON data files
+│   │   ├── hm_product_list.json
+│   │   ├── mock_data.json
+│   │   ├── SAMPLE_hm_product_list.json
+│   │   ├── SAMPLE_mock_data.json
 ├── includes/ # global page elements
 │   ├── header.php
 │   ├── footer.php

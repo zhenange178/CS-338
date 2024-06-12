@@ -62,9 +62,13 @@ if ($mysqli->query($sql) === TRUE) {
 
 $sql = "CREATE TABLE IF NOT EXISTS productCategories (
     productID INT PRIMARY KEY,
-    primaryCategory VARCHAR(255) NOT NULL,
-    secondaryCategory VARCHAR(255),
-    tertiaryCategory VARCHAR(255),
+    category0 VARCHAR(255) NOT NULL,
+    category1 VARCHAR(255),
+    category2 VARCHAR(255),
+    category3 VARCHAR(255),
+    category4 VARCHAR(255),
+    category5 VARCHAR(255),
+    category6 VARCHAR(255),
     CONSTRAINT fk_product_category
         FOREIGN KEY (productID) 
         REFERENCES products(productID)

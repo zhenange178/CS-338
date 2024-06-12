@@ -190,17 +190,21 @@ class DatabasePopulator {
         }
 
         foreach ($ordersData['orders'] as $order) {
-            $stmt->bind_param("iiis",
-                $order['OrderID'],
-                $order['CustomerID'],
-                $order['TrackingID'],
-                $order['DateTime']
-            );
-
-            if (!$stmt->execute()) {
-                echo "Error importing order with ID {$order['OrderID']}: " . $stmt->error . "<br/>";
-            } else {
-                // echo "Order with ID {$order['OrderID']} imported successfully.<br/>";
+            // Check if the order has a 'returned' status
+            if (isset($order['returned'])) {
+                $stmt->bind_param(
+                    'iss',
+                    $order['OrderID'],
+                    $order['returned']['returnDateTime'],
+                    $order['returned']['returnReason']
+                );
+    
+                // Execute the statement and check for errors
+                if (!$stmt->execute()) {
+                    echo "Error importing order with ID {$order['OrderID']}: " . $stmt->error . "<br/>";
+                } else {
+                    // echo "Order with ID {$order['OrderID']} imported successfully.<br/>";
+                }
             }
         }
 

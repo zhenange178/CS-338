@@ -36,6 +36,7 @@ $populator->importProducts($mysqli, $productsData);
 $populator->importCustomers($mysqli, $mockData);
 $populator->importMemberships($mysqli, $mockData);
 $populator->importOrders($mysqli, $mockData);
+$populator->importReturnedOrders($mysqli, $mockData);
 $populator->importReviews($mysqli, $mockData);
 $populator->importPromoCodes($mysqli, $mockData);
 

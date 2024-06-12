@@ -92,6 +92,22 @@ function randomReason() {
     return $reasons[array_rand($reasons)];
 }
 
+function randomComment() {
+    $comments = [
+        'Great product!',
+        'Very satisfied with the quality.',
+        'Would buy again.',
+        'Not as expected.',
+        'Exceeded my expectations!',
+        'Fast shipping and good service.',
+        'Poor quality, not recommended.',
+        'Good value for money.',
+        'Amazing, highly recommend!',
+        'Packaging was damaged.',
+    ];
+    return $comments[array_rand($comments)];
+}
+
 $startTime = microtime(true);
 echo "<b>Generating Mock Data...</b><br />";
 flush();
@@ -124,7 +140,7 @@ $streetNames = [
 
 // Generate mock customers
 $customers = [];
-for ($i = $idCustomer+1; $i <= $idCustomer+100; $i++) {
+for ($i = $idCustomer+1; $i <= $idCustomer+10; $i++) {
     $firstName = $firstNames[array_rand($firstNames)];
     $lastName = $lastNames[array_rand($lastNames)];
     $cityCountry = $cityCountries[array_rand($cityCountries)];
@@ -219,7 +235,7 @@ foreach ($customers as $customer) {
             'ProductID' => $productIds[array_rand($productIds)]  // Random product ID from the list
         ];
         if (rand(0, 1)) {  // Randomly decide to add a comment
-            $review['Comment'] = 'Sample comment for product ID ' . $review['ProductID'];
+            $review['Comment'] = randomComment();
         }
         $reviews[] = $review;
     }
@@ -234,7 +250,7 @@ flush();
 
 // Generate codes data
 $codes = [];
-for ($i = 0; $i < 300; $i++) {
+for ($i = 0; $i < 30; $i++) {
     $code = [
         'PromoCode' => randomString(),
         'Source' => '',
@@ -265,7 +281,7 @@ $data = [
 echo "Writing data...<br />";
 $jsonData = json_encode($data, JSON_PRETTY_PRINT);
 
-$fileName = 'data/mock_data.json';
+$fileName = 'data/SAMPLE_mock_data.json';
 
 if (file_put_contents($fileName, $jsonData)){
     $endTime = microtime(true);

@@ -2,11 +2,16 @@
 
     <div>
         <h2>About</h2>
-        This project is for blah blah blah. You can use it to do this or that, something about H&M I assume. Our members consist of this guy and that guy. We used something something to build the site. The database will be setup locally using something something. To setup, make sure you've downloaded this and that and enabled something else. See [link to github readme] for details on setup. Etc...
-    </div>
-    <div>
-        <br/><h2>The Actual Things</h2>
-        inb4 the actual content of the project probably should go somewhere here.<br/>
+        H&M Promo Site
+
+        <h2>PHP and MySQL Setup</h2>
+        If you haven't already, set up PHP and MySQL, and activate the required extensions. Instructions in README on <a href="https://github.com/zhenange178/CS-338" target="_blank" rel="noopener noreferrer">GitHub</a>.<br/>
+
+        <h2>Initialization</h2>
+        First-time-users: proceed to the Initialization page via the header bar or by clicking <a href="/initialize.php">here</a>.<br/>
+
+        <h2>Features</h2>
+        Once initialized, check out the site's features via the header bar.<br />
     </div>
 
 <?php include 'includes/footer.php'; ?>

@@ -55,3 +55,6 @@ Great. Now you want to start the PHP/MySQL server. On your local machine, the st
 
 ## Current Features
 * 
+
+## File Structure
+TODO

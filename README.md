@@ -57,4 +57,36 @@ Great. Now you want to start the PHP/MySQL server. On your local machine, the st
 * 
 
 ## File Structure
-TODO
+<pre>
+CS-338/ 
+├── index.php 
+├── initialize.php 
+├── features_sample.php
+├── features_production.php
+├── init/ # initialization
+│   ├── reset.php # reset all data and databases
+│   ├── update_product.php # update only product info
+│   ├── sample.php # initialize sample database
+│   ├── includes/ # individual php modules used in /init/ pages
+│   │   ├── get_api.php # retrive and save latest H&M product data
+│   │   ├── generate_mock_data.php # randomly generate mock data for customers and other tables
+│   │   ├── DatabaseCreator.php
+│   │   ├── create_database.php
+│   │   ├── ...
+│   │   ├── DatabasePopulator.php
+│   │   ├── populate_database_all.php
+│   │   ├── ... 
+│   │   ├── redirect.php # auto redirect after running
+│   ├── data/
+│   │   ├── hm_product_list.json # stores updated product data
+│   │   ├── mock_data.json # stores generated mock data
+│   │   ├── SAMPLE_hm_product_list.json # static sample product data
+│   │   ├── SAMPLE_mock_data.json # static sample mock data
+├── includes/ # global page elements
+│   ├── header.php
+│   ├── footer.php
+├── styles/
+│   ├── global.css
+└── docs/ # image docs for README
+    ├── ...
+</pre>

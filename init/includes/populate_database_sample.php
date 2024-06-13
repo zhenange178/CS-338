@@ -30,7 +30,7 @@ echo "Writing data to tables...<br />";
 $dataPopulated = true;
 
 $productsData = $populator->readJson('data/SAMPLE_hm_product_list.json');
-$mockData = $populator->readJson('data/mock_data.json');
+$mockData = $populator->readJson('data/SAMPLE_mock_data.json');
 
 $populator->importProducts($mysqli, $productsData);
 $populator->importCustomers($mysqli, $mockData);

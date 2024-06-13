@@ -191,7 +191,7 @@ class DatabaseCreator{
             customerID INT,
             productID INT,
             rating INT NOT NULL,
-            comment VARCHAR(255) NOT NULL,
+            comment VARCHAR(255),
             CONSTRAINT fk_customer_review
                 FOREIGN KEY (customerID) 
                 REFERENCES customers(customerID)

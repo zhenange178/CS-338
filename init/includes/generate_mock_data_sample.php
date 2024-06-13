@@ -7,10 +7,10 @@ while (ob_get_level()) {
 set_time_limit(120);
 
 // Define ID start values
-$idCustomer = 100000;
-$idMembership = 200000;
-$idOrder = 300000;
-$idReview = 400000;
+$idCustomer = 110000;
+$idMembership = 210000;
+$idOrder = 310000;
+$idReview = 410000;
 
 /**
  * randomDate
@@ -140,7 +140,7 @@ $streetNames = [
 
 // Generate mock customers
 $customers = [];
-for ($i = $idCustomer+1; $i <= $idCustomer+100; $i++) {
+for ($i = $idCustomer+1; $i <= $idCustomer+10; $i++) {
     $firstName = $firstNames[array_rand($firstNames)];
     $lastName = $lastNames[array_rand($lastNames)];
     $cityCountry = $cityCountries[array_rand($cityCountries)];
@@ -217,7 +217,7 @@ flush();
  */
 
 // Load product data from json
-$productData = json_decode(file_get_contents('data/hm_product_list.json'), true)['products'];
+$productData = json_decode(file_get_contents('data/SAMPLE_hm_product_list.json'), true)['products'];
 $productIds = array_map(function ($product) {
     return $product['id'];
 }, $productData);
@@ -250,7 +250,7 @@ flush();
 
 // Generate codes data
 $codes = [];
-for ($i = 0; $i < 300; $i++) {
+for ($i = 0; $i < 30; $i++) {
     $code = [
         'PromoCode' => randomString(),
         'Source' => '',
@@ -281,7 +281,7 @@ $data = [
 echo "Writing data...<br />";
 $jsonData = json_encode($data, JSON_PRETTY_PRINT);
 
-$fileName = 'data/mock_data.json';
+$fileName = 'data/SAMPLE_mock_data.json';
 
 if (file_put_contents($fileName, $jsonData)){
     $endTime = microtime(true);

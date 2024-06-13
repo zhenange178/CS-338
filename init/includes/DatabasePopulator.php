@@ -220,10 +220,11 @@ class DatabasePopulator {
         }
 
         foreach ($reviewsData['reviews'] as $review) {
+            $productID = (int)$review['ProductID'];
             $stmt->bind_param("iiiis",
                 $review['ReviewID'],
                 $review['CustomerID'],
-                $review['ProductID'],
+                $productID,
                 $review['Rating'],
                 $review['Comment']
             );

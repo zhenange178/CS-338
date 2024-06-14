@@ -1,11 +1,11 @@
 <?php
 class DataGenerator {
-    private $idCustomer;
-    private $idMembership;
-    private $idOrder;
-    private $idReview;
-    private $mockDataPath;
-    private $productDataPath;
+    // private $idCustomer;
+    // private $idMembership;
+    // private $idOrder;
+    // private $idReview;
+    // private $mockDataPath;
+    // private $productDataPath;
 
     /**
      * Constructor
@@ -17,14 +17,14 @@ class DataGenerator {
      * @param string $mockDataPath path where generated data is to be stored. Note: path relative to outmost page in includes
      * @param string $productDataPath path where product data is stored. Used to generate certain mock data
      */
-    public function __construct ($idCustomer, $idMembership, $idOrder, $idReview, $mockDataPath, $productDataPath){
-        $this->idCustomer = $idCustomer;
-        $this->idMembership = $idMembership;
-        $this->idOrder = $idOrder;
-        $this->idReview = $idReview;
-        $this->mockDataPath = $mockDataPath;
-        $this->productDataPath = $productDataPath;
-    }
+    // public function __construct ($idCustomer, $idMembership, $idOrder, $idReview, $mockDataPath, $productDataPath){
+    //     $this->idCustomer = $idCustomer;
+    //     $this->idMembership = $idMembership;
+    //     $this->idOrder = $idOrder;
+    //     $this->idReview = $idReview;
+    //     $this->mockDataPath = $mockDataPath;
+    //     $this->productDataPath = $productDataPath;
+    // }
 
     /**
      * randomDate
@@ -107,6 +107,7 @@ class DataGenerator {
      * 
      * @return string a random review comment out of predefined values
      */
+    // TODO: make randomcomment and random rating dependent, more realistic
     public function randomComment() {
         $comments = [
             'Great product!',
@@ -147,7 +148,7 @@ class DataGenerator {
      * @param int $customerReviewsMax maximum amount of reviews a customer can have
      * @param int $numCodes number of promo codes to generate
      */
-    public function generateData($numCustomers, $chanceMember, $customerOrdersMin, $customerOrdersMax, $chanceReturn, $customerReviewsMin, $customerReviewsMax, $numCodes){
+    public function generateData($idCustomer, $idMembership, $idOrder, $idReview, $mockDataPath, $productDataPath, $numCustomers, $chanceMember, $customerOrdersMin, $customerOrdersMax, $chanceReturn, $customerReviewsMin, $customerReviewsMax, $numCodes){
         $startTime = microtime(true);
         echo "<b>Generating Mock Data...</b><br />";
         flush();
@@ -180,14 +181,14 @@ class DataGenerator {
 
         // Generate mock customers
         $customers = [];
-        for ($i = $idCustomer + 1; $i <= $idCustomer + $numCustomers; $i++) {
+        for ($i = 0; $i < $numCustomers; $i++) {
             $firstName = $firstNames[array_rand($firstNames)];
             $lastName = $lastNames[array_rand($lastNames)];
             $cityCountry = $cityCountries[array_rand($cityCountries)];
             $streetName = $streetNames[array_rand($streetNames)];
             $customer = [
-                'ID' => $i,
-                'Birth' => this->randomDate('1950-01-01', '2000-12-31'),
+                'ID' => ++$idCustomer,
+                'Birth' => $this->randomDate('1950-01-01', '2000-12-31'),
                 'Phone' => '+1-' . rand(200, 999) . '-' . rand(100, 999) . '-' . rand(1000, 9999),
                 'Address' => rand(1, 100) . ' ' . $streetName . ', ' . $cityCountry['City'] . ', ' . $cityCountry['Country'],
                 'Email' => strtolower($firstName . '.' . $lastName . '@example.com'),
@@ -210,7 +211,7 @@ class DataGenerator {
                     'MemberID' => ++$idMembership,
                     'CustomerID' => $customer['ID'],
                     'Price' => rand(1,99),
-                    'Expiration' => this->randomDate('2024-06-01', '2034-01-01'),
+                    'Expiration' => $this->randomDate('2024-06-01', '2034-01-01'),
                     'Rank' => rand(1,6),
                 ];
                 $memberships[] = $membership;
@@ -234,14 +235,14 @@ class DataGenerator {
                     'OrderID' => $orderId,
                     'CustomerID' => $customer['ID'],
                     'TrackingID' => rand(100000, 999999),
-                    'DateTime' => this->randomDateTime('2020-01-01', '2022-12-31'),
+                    'DateTime' => $this->randomDateTime('2020-01-01', '2022-12-31'),
                 ];
 
                 $isReturned = (bool)rand(0, 1);
                 if ($isReturned) {
                     $order['returned'] = [
-                        'returnDateTime' => randomDateTime('2023-01-01', '2024-05-31'),
-                        'returnReason' => this->randomReason()
+                        'returnDateTime' => $this->randomDateTime('2023-01-01', '2024-05-31'),
+                        'returnReason' => $this->randomReason()
                     ];
                 }
                 $orders[] = $order;
@@ -275,7 +276,7 @@ class DataGenerator {
                     'ProductID' => $productIds[array_rand($productIds)]  // Random product ID from the list
                 ];
                 if (rand(0, 1)) {  // Randomly decide to add a comment
-                    $review['Comment'] = this->randomComment();
+                    $review['Comment'] = $this->randomComment();
                 }
                 $reviews[] = $review;
             }
@@ -292,12 +293,12 @@ class DataGenerator {
         $codes = [];
         for ($i = 0; $i < $numCodes; $i++) {
             $code = [
-                'PromoCode' => this->randomString(),
+                'PromoCode' => $this->randomString(),
                 'Source' => '',
                 'TotalAvailable' => rand(10, 1000),
-                'isMemberOnly' => this->indicator(0.5),
-                'Expiration' => this->randomDate('2024-06-01', '2034-01-01'),
-                'DiscountType' => this->randomDiscount(),
+                'isMemberOnly' => $this->indicator(0.5),
+                'Expiration' => $this->randomDate('2024-06-01', '2034-01-01'),
+                'DiscountType' => $this->randomDiscount(),
                 'DiscountAmount' => rand(5, 50),
                 'RestrictionAmount' => rand(50, 150)
             ];

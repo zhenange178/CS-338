@@ -137,7 +137,7 @@ class DatabasePopulator {
         }
 
         foreach ($membershipsData['memberships'] as $membership) {
-            $stmt->bind_param("iidsi",
+            $stmt->bind_param("iidis",
                 $membership['MemberID'],
                 $membership['CustomerID'],
                 $membership['Price'],
@@ -220,6 +220,7 @@ class DatabasePopulator {
         }
 
         foreach ($reviewsData['reviews'] as $review) {
+            // attempt to fix not loading
             $productID = (int)$review['ProductID'];
             $stmt->bind_param("iiiis",
                 $review['ReviewID'],
@@ -251,7 +252,7 @@ class DatabasePopulator {
         // Iterate through each promo code entry and bind values to the statement
         foreach ($promoCodesData['promoCodes'] as $code) {
             $isMemberOnly = $code['isMemberOnly'] ? 1 : 0; // Convert boolean to integer for MySQL
-            $stmt->bind_param("ssisdsdd",
+            $stmt->bind_param("ssiissdd",
                 $code['PromoCode'],
                 $code['Source'],
                 $code['TotalAvailable'],

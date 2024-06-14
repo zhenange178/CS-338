@@ -225,17 +225,42 @@ class DataGenerator {
          * Generate Orders
          */
 
+        // Load product data from json
+        $productData = json_decode(file_get_contents($productDataPath), true)['products'];
+        $productIds = array_map(function ($product) {
+            return $product['id'];
+        }, $productData);
+
         // Generate mock orders
         $orders = [];
         $orderId = $idOrder + 1;
         foreach ($customers as $customer) {
             $numOrders = rand($customerOrdersMin, $customerOrdersMax);
             for ($j = 0; $j < $numOrders; $j++) {
+                // Generate random list of products
+                $products = [];
+                $numProducts = rand(1, 10);
+                for ($k = 0; $k < $numProducts; $k++){
+                    $product = $productIds[array_rand($productIds)];
+                    $products[] = $product;
+                }
+
+                // Generate random count for each product
+                $productsCounts = [];
+                foreach ($products as $product){
+                    $productCount = [
+                        'ProductID' => $product,
+                        'Count' => rand(1,4)
+                    ];
+                    $productsCounts[] = $productCount;
+                }
+                
                 $order = [
                     'OrderID' => $orderId,
                     'CustomerID' => $customer['ID'],
                     'TrackingID' => rand(100000, 999999),
                     'DateTime' => $this->randomDateTime('2020-01-01', '2022-12-31'),
+                    'Products' => $productsCounts
                 ];
 
                 $isReturned = (bool)rand(0, 1);
@@ -256,12 +281,6 @@ class DataGenerator {
         /**
          * Generate Reviews
          */
-
-        // Load product data from json
-        $productData = json_decode(file_get_contents($productDataPath), true)['products'];
-        $productIds = array_map(function ($product) {
-            return $product['id'];
-        }, $productData);
 
         // Generate review data
         $reviews = [];

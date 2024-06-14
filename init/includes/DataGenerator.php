@@ -7,6 +7,16 @@ class DataGenerator {
     private $mockDataPath;
     private $productDataPath;
 
+    /**
+     * Constructor
+     * 
+     * @param int $idCustomer padding of customer IDs (e.g. $idCustomer = 1000 -> first customer ID = 1001)
+     * @param int $idMembership padding of membership IDs
+     * @param int $idOrder padding of order IDs
+     * @param int $idReview padding of review IDs
+     * @param string $mockDataPath path where generated data is to be stored. Note: path relative to outmost page in includes
+     * @param string $productDataPath path where product data is stored. Used to generate certain mock data
+     */
     public function __construct ($idCustomer, $idMembership, $idOrder, $idReview, $mockDataPath, $productDataPath){
         $this->idCustomer = $idCustomer;
         $this->idMembership = $idMembership;
@@ -76,6 +86,11 @@ class DataGenerator {
         return 'amount_off';
     }
 
+    /**
+     * randomReason
+     * 
+     * @return string a random return reason out of predefined values
+     */
     public function randomReason() {
         $reasons = [
             'Defective item',
@@ -87,6 +102,11 @@ class DataGenerator {
         return $reasons[array_rand($reasons)];
     }
 
+    /**
+     * randomComment
+     * 
+     * @return string a random review comment out of predefined values
+     */
     public function randomComment() {
         $comments = [
             'Great product!',
@@ -114,6 +134,19 @@ class DataGenerator {
         return (rand(1, 1000) <= 1000 * $p);
     }
 
+    /**
+     * generate Data
+     * Main method. Generate all mock data and store in $mockDataPath
+     * 
+     * @param int $numCustomers number of customers to generate
+     * @param float $chanceMember probability that a certain customer has membership
+     * @param int $customerOrdersMin minimum amount of orders a customer can have
+     * @param int $customerOrdersMax maxmimum amount of orders a customer can have
+     * @param float $chanceReturn probabiliy that a certain order is returned
+     * @param int $customerReviewsMin minimum amount of reviews a customer can have
+     * @param int $customerReviewsMax maximum amount of reviews a customer can have
+     * @param int $numCodes number of promo codes to generate
+     */
     public function generateData($numCustomers, $chanceMember, $customerOrdersMin, $customerOrdersMax, $chanceReturn, $customerReviewsMin, $customerReviewsMax, $numCodes){
         $startTime = microtime(true);
         echo "<b>Generating Mock Data...</b><br />";

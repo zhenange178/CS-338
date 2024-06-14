@@ -3,7 +3,7 @@
     <p><a href="/initialize.php">Back</a></p>
 </div>
 <h3>Update Product Data</h3>
-<?php include '../init/includes/get_api.php'; ?>
-<?php include '../init/includes/populate_database_product.php'; ?>
+<?php include '../init/includes/production/get_api.php'; ?>
+<?php include '../init/includes/production/populate_database_product.php'; ?>
 <?php include '../init/includes/redirect.php'; ?>
 </div>

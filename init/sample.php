@@ -3,7 +3,7 @@
     <p><a href="/initialize.php">Back</a></p>
 </div>
 <h3>Initialize Sample Database</h3>
-<?php include '../init/includes/create_database_sample.php'; ?>
-<?php include '../init/includes/populate_database_sample.php'; ?>
+<?php include '../init/includes/development/create_database_sample.php'; ?>
+<?php include '../init/includes/development/populate_database_sample.php'; ?>
 <?php include '../init/includes/redirect.php'; ?>
 </div>

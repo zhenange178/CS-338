@@ -157,60 +157,69 @@ class DatabasePopulator {
     }
 
     public function importOrders($mysqli, $ordersData) {
-        $stmt = $mysqli->prepare("INSERT IGNORE INTO orders (orderID, customerID, trackingID, orderDateTime) VALUES (?, ?, ?, ?)");
+        $ordersStmt = $mysqli->prepare("INSERT IGNORE INTO orders (orderID, customerID, trackingID, orderDateTime) VALUES (?, ?, ?, ?)");
+        $returnsStmt = $mysqli->prepare("INSERT IGNORE INTO returnedOrders (orderID, returnDateTime, returnReason) VALUES (?, ?, ?)");
+        $detailsStmt = $mysqli->prepare("INSERT IGNORE INTO orderDetails (orderID, productID, count) VALUES (?, ?, ?)");
         
-        if ($stmt === false) {
+        if ($ordersStmt === false || $returnsStmt === false || $detailsStmt === false) {
             die('MySQL prepare error: ' . $mysqli->error);
         }
 
+        // import orders
         foreach ($ordersData['orders'] as $order) {
-            $stmt->bind_param("iiis",
-                $order['OrderID'],
+            $success = true;
+            $orderID = $order['OrderID'];
+            // orders
+            $ordersStmt->bind_param("iiis",
+                $orderID,
                 $order['CustomerID'],
                 $order['TrackingID'],
                 $order['DateTime']
             );
+            if (!$ordersStmt->execute()){
+                $success = false;
+            }
 
-            if (!$stmt->execute()) {
-                echo "Error importing order with ID {$order['OrderID']}: " . $stmt->error . "<br/>";
+            // Add details
+            if (isset($order['Products'])) {
+                foreach ($order['Products'] as $item) {
+                    $detailsStmt->bind_param("iii",
+                        $orderID,
+                        $item['ProductID'],
+                        $item['Count'],
+                    );
+                    if(!$detailsStmt->execute()){
+                        $success = false;
+                    }
+                }
+            }
+            
+            // Check if the order has a 'returned' status
+            if (isset($order['returned'])) {
+                $returnsStmt->bind_param(
+                    'iss',
+                    $orderID,
+                    $order['returned']['returnDateTime'],
+                    $order['returned']['returnReason']
+                );
+                if (!$returnsStmt->execute()) {
+                    $success = false;
+                }
+            }
+
+            if (!$success) {
+                echo "Error importing order with ID {$order['OrderID']}: " . $ordersStmt->error . "<br/>";
             } else {
                 // echo "Order with ID {$order['OrderID']} imported successfully.<br/>";
             }
         }
 
         //echo "Orders imported successfully.<br/>";
-        $stmt->close();
+        $ordersStmt->close();
+        $returnsStmt->close();
+        $detailsStmt->close();
     }
 
-    public function importReturnedOrders($mysqli, $ordersData) {
-        $stmt = $mysqli->prepare("INSERT IGNORE INTO returnedOrders (orderID, returnDateTime, returnReason) VALUES (?, ?, ?)");
-        
-        if ($stmt === false) {
-            die('MySQL prepare error: ' . $mysqli->error);
-        }
-
-        foreach ($ordersData['orders'] as $order) {
-            // Check if the order has a 'returned' status
-            if (isset($order['returned'])) {
-                $stmt->bind_param(
-                    'iss',
-                    $order['OrderID'],
-                    $order['returned']['returnDateTime'],
-                    $order['returned']['returnReason']
-                );
-    
-                // Execute the statement and check for errors
-                if (!$stmt->execute()) {
-                    echo "Error importing order with ID {$order['OrderID']}: " . $stmt->error . "<br/>";
-                } else {
-                    // echo "Order with ID {$order['OrderID']} imported successfully.<br/>";
-                }
-            }
-        }
-
-        //echo "Orders imported successfully.<br/>";
-        $stmt->close();
-    }
 
     public function importReviews($mysqli, $reviewsData) {
         $stmt = $mysqli->prepare("INSERT IGNORE INTO reviews (reviewID, customerID, productID, rating, comment) VALUES (?, ?, ?, ?, ?)");

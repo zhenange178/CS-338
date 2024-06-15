@@ -166,7 +166,7 @@ class DatabaseCreator{
             $tablesCreated = false;
         }
 
-        // Create orders Table
+        // Create returned orders Table
         $sql = "CREATE TABLE IF NOT EXISTS returnedOrders (
             orderID INT,
             returnDateTime DATETIME NOT NULL,
@@ -182,6 +182,30 @@ class DatabaseCreator{
             // echo "Table 'returnedOrders' created<br />";
         } else {
             echo "Error creating table 'returnedOrders': " . $mysqli->error . "<br />";
+            $tablesCreated = false;
+        }
+
+        // Create orderDetails Table
+        $sql = "CREATE TABLE IF NOT EXISTS orderDetails (
+            orderID INT,
+            productID INT,
+            count INT NOT NULL,
+            CONSTRAINT fk_order_detail
+                FOREIGN KEY (orderID) 
+                REFERENCES orders(orderID)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE,
+            CONSTRAINT fk_product_detail
+                FOREIGN KEY (productID) 
+                REFERENCES products(productID)
+                ON DELETE SET NULL
+                ON UPDATE CASCADE
+        )";
+
+        if ($mysqli->query($sql) === TRUE) {
+            // echo "Table 'orderDetails' created<br />";
+        } else {
+            echo "Error creating table 'orderDetails': " . $mysqli->error . "<br />";
             $tablesCreated = false;
         }
 

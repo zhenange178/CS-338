@@ -20,7 +20,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$allTables = ['products', 'productCategories', 'productColors', 'productPrices', 'customers', 'memberships', 'orders', 'returnedOrders', 'reviews', 'promoCodes'];
+$allTables = ['products', 'productCategories', 'productColors', 'productPrices', 'customers', 'memberships', 'orders', 'returnedOrders', 'orderDetails', 'reviews', 'promoCodes'];
 
 foreach ($allTables as $table){
     echo"<br/>" . $table . "<br/>";

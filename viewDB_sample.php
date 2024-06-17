@@ -3,8 +3,8 @@
 require 'ViewDB.php';
 
 function showTable($conn, $tableName){
-    $tableDisplay = new ViewDB($conn, $tableName);
-    $tableDisplay->displayTable();
+    $tableDisplay = new ViewDB($conn);
+    $tableDisplay->displayTable("SELECT * FROM " . $tableName);
 }
 
 // Database connection parameters

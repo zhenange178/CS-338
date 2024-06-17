@@ -15,7 +15,7 @@ class DatabasePopulator {
     // Import data functions
     public function importProducts($mysqli, $productsData) {
         // Prepare the statements for each table
-        $productStmt = $mysqli->prepare("INSERT IGNORE INTO products (productID, productName, productURL, productWeight, sellingAttribute, stock, comingSoon) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $productStmt = $mysqli->prepare("INSERT IGNORE INTO products (productID, productName, productURL, productImage, productWeight, sellingAttribute, stock, comingSoon) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $categoryStmt = $mysqli->prepare("INSERT IGNORE INTO productCategories (productID, category, categoryType) VALUES (?, ?, ?)");
         $colorStmt = $mysqli->prepare("INSERT IGNORE INTO productColors (articleID, productID, colorName, colorCode, articleImage) VALUES (?, ?, ?, ?, ?)");
         $priceStmt = $mysqli->prepare("INSERT IGNORE INTO productPrices (productID, priceType, price) VALUES (?, ?, ?)");
@@ -28,10 +28,11 @@ class DatabasePopulator {
         foreach ($productsData['products'] as $product) {
             // Import products
             $success = true;
-            $productStmt->bind_param("issdssi",
+            $productStmt->bind_param("isssdssi",
                 $product['id'],
                 $product['productName'],
                 $product['url'],
+                $product['modelImage'],
                 $product['quantity'],
                 $product['sellingAttribute'],
                 $product['availability']['stockState'],
@@ -101,6 +102,11 @@ class DatabasePopulator {
     }
 
     public function importCustomers($mysqli, $customersData) {
+        $realUserStmt = $mysqli->prepare("INSERT IGNORE INTO customers (customerID) VALUES (100000)");
+        if (!$realUserStmt->execute()) {
+            echo "Error importing customer 0<br/>";
+        }
+
         $stmt = $mysqli->prepare("INSERT IGNORE INTO customers (customerID, customerBirth, customerPhone, customerAddress, customerEmail, firstName, lastName) VALUES (?, ?, ?, ?, ?, ?, ?)");
         
         if ($stmt === false) {

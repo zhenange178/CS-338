@@ -2,18 +2,13 @@
 class ViewDB {
 
     private $conn;
-    private $tableName;
 
-    // Constructor to initialize the connection and table name
-    public function __construct($conn, $tableName) {
+    public function __construct($conn) {
         $this->conn = $conn;
-        $this->tableName = $tableName;
     }
 
     // Function to display the table contents
-    public function displayTable() {
-        // Query to fetch all rows from the table
-        $sql = "SELECT * FROM " . $this->tableName;
+    public function displayTable($sql) {
         $result = $this->conn->query($sql);
 
         if ($result->num_rows > 0) {
@@ -21,14 +16,12 @@ class ViewDB {
             echo "<table border='1'>
                     <tr>";
 
-            // Fetch the field names
             while ($fieldinfo = $result->fetch_field()) {
                 echo "<th>{$fieldinfo->name}</th>";
             }
 
             echo "</tr>";
 
-            // Fetch the rows and display them
             while ($row = $result->fetch_assoc()) {
                 echo "<tr>";
                 foreach ($row as $cell) {
@@ -39,7 +32,7 @@ class ViewDB {
 
             echo "</table>";
         } else {
-            echo "0 results for " . $this->tableName;
+            echo "0 results";
         }
     }
 }

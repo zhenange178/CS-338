@@ -36,6 +36,7 @@ class DatabaseCreator{
             productID INT PRIMARY KEY,
             productName VARCHAR(255) NOT NULL,
             productURL VARCHAR(255) NOT NULL,
+            productImage VARCHAR(255) NOT NULL,
             productWeight FLOAT,
             sellingAttribute VARCHAR(255),
             stock VARCHAR(255) NOT NULL,
@@ -110,12 +111,12 @@ class DatabaseCreator{
         // Create Customer Table
         $sql = "CREATE TABLE IF NOT EXISTS customers (
             customerID INT PRIMARY KEY,
-            customerBirth DATE NOT NULL,
-            customerPhone VARCHAR(255) NOT NULL,
-            customerAddress VARCHAR(255) NOT NULL,
-            customerEmail VARCHAR(255) NOT NULL,
-            firstName VARCHAR(255) NOT NULL,
-            lastName VARCHAR(255) NOT NULL
+            customerBirth DATE,
+            customerPhone VARCHAR(255),
+            customerAddress VARCHAR(255),
+            customerEmail VARCHAR(255),
+            firstName VARCHAR(255),
+            lastName VARCHAR(255)
         )";
 
         if ($mysqli->query($sql) === TRUE) {

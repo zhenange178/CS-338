@@ -12,6 +12,7 @@
             <li><a href="/initialize.php">Initialize</a></li>
             <li><a href="/features_sample.php">Features (Sample)</a></li>
             <li><a href="/features_production.php">Features (Production)</a></li>
+            <li style="float:right"><a href="/me.php">My Account</a></li>
         </ul>
     </header>
     </div>

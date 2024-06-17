@@ -21,9 +21,6 @@ if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
 
-// disable strict mode
-$mysqli->query("SET SESSION sql_mode = ''");
-
 $populator = new DatabasePopulator();
 
 echo "<b>Populating Database...</b><br />";

@@ -57,37 +57,47 @@ Great. Now you want to start the PHP/MySQL server. On your local machine, the st
 * 
 
 ## File Structure
-This is outdated
-<pre>
+
+``` shell
 CS-338/ 
+│   # Displayed "Regular" Pages
 ├── index.php 
 ├── initialize.php 
+├── me.php 
 ├── features_sample.php
 ├── features_production.php
-├── init/ # initialization
-│   ├── reset.php # reset all data and databases
-│   ├── update_product.php # update only product info
-│   ├── sample.php # initialize sample database
-│   ├── includes/ # individual php modules used in /init/ pages
-│   │   ├── get_api.php # retrive and save latest H&M product data
-│   │   ├── generate_mock_data.php # randomly generate mock data for customers and other tables
+├── init/ # Data Generation + Database Initialization
+│   ├── reset.php
+│   ├── update_product.php
+│   ├── generate_sample.php 
+│   ├── sample.php 
+│   ├── includes/
+│   │   # Data Processing Objects Classes
+│   │   ├── DataGenerator.php
 │   │   ├── DatabaseCreator.php
-│   │   ├── create_database.php
-│   │   ├── ...
 │   │   ├── DatabasePopulator.php
+│   │   # Sample Data Implementation
+│   │   ├── generate_mock_data_sample.php
+│   │   ├── create_database_sample.php
+│   │   ├── populate_database_sample.php
+│   │   # Production Data Implementation
+│   │   ├── get_api.php
+│   │   ├── generate_mock_data.php
+│   │   ├── create_database.php
 │   │   ├── populate_database_all.php
-│   │   ├── ... 
-│   │   ├── redirect.php # auto redirect after running scripts
-│   ├── data/ # JSON data files
+│   │   ├── populate_database_product.php
+│   │   ├── redirect.php
+│   ├── data/ 
 │   │   ├── hm_product_list.json
 │   │   ├── mock_data.json
 │   │   ├── SAMPLE_hm_product_list.json
 │   │   ├── SAMPLE_mock_data.json
-├── includes/ # global page elements
+├── includes/
 │   ├── header.php
 │   ├── footer.php
+│   ├── ...
 ├── styles/
 │   ├── global.css
 └── docs/ # image docs for README
     ├── ...
-</pre>
+```

@@ -42,7 +42,7 @@ if ($conn->connect_error) {
             </select>
         </label><br>
         <button type="submit" name="submit_search">Search</button>
-    </form>
+    </form><br/>
 
     <?php
     //search form
@@ -69,10 +69,9 @@ if ($conn->connect_error) {
         if ($availability != 'all_availability') {
             $query .= " AND stock = '" . mysqli_real_escape_string($conn, $availability) . "'";
         }
-        echo "<code>$query</code>";
-        echo"<br/>";
+        echo "<big><code>$query</code></big><br/>";
         $tableDisplay = new ViewDB($conn);
-        $tableDisplay->displayTable($query);
+        $tableDisplay->listProducts($query);
 
     }
     $conn->close();

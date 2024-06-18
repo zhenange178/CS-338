@@ -212,7 +212,7 @@ class DatabaseCreator{
 
         // Create reviews Table
         $sql = "CREATE TABLE IF NOT EXISTS reviews (
-            reviewID INT PRIMARY KEY,
+            reviewID INT AUTO_INCREMENT PRIMARY KEY,
             customerID INT,
             productID INT,
             rating INT NOT NULL,

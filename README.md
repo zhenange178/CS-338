@@ -51,12 +51,13 @@ For example, these are my newly added Path values.
 ## Start Server
 Great. Now you want to start the PHP/MySQL server. On your local machine, the started server will be located at `http://127.0.0.1:8000/`. Do this whenever you want to see your new changes at work.
 1. Start the PHP server in this root directory using the command `php -S 127.0.0.1:8000`
-2. Navigate to `http://127.0.0.1:8000/exampleDB.php`. This is the local homepage.
+2. Navigate to `http://127.0.0.1:8000`. This is the local homepage.
 
 ## Current Features
 * 
 
 ## File Structure
+This is outdated
 <pre>
 CS-338/ 
 ├── index.php 

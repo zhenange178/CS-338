@@ -67,7 +67,8 @@ if (isset($_POST['save'])) {
     $stmt->bind_param("ssssssi", $firstName, $lastName, $birthday, $email, $phone, $address, $id);
 
     if ($stmt->execute()) {
-        echo "Changes updated successfully.";
+        header("Location: me.php");
+        exit();
     } else {
         echo "Error updating customer: " . $conn->error;
     }

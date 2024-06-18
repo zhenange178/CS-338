@@ -76,8 +76,11 @@ if (isset($_GET['id'])) {
 ?>
 <?php if ($product): ?>
 <div class="container" style="display: flex;">
-    <div class="left-column" style="flex: 1; padding: 10px; background-color: #f0f0f0;">
-        <div style="text-align:center">
+    <div style="flex: 1;">
+        <img src="<?php echo $product['productImage']; ?>" alt="Product Image" style="max-width: 100%; height: auto; max-height: 500px; display: block; margin: 0px auto;">
+    </div>
+    <div style="flex: 1; padding: 10px;">
+        <div style="text-align:center; background-color: #f0f0f0; padding: 0 5px 5px;">
             <h2><?php echo "<h2>{$product['productName']}"; ?></h2>
             <big><?php 
             $whitePrice = null;
@@ -101,10 +104,35 @@ if (isset($_GET['id'])) {
             }
             ?></big>
         </div>
+        <div style="padding: 10px 5px 5px;">
+            <?php 
+            if ($product['sellingAttribute'] === 'New Arrival'){
+                echo "<big>New Arrival</big><br/>";
+            }
+            if ($product['stock'] === 'Available'){
+                echo "In Stock<br/>";
+            } else {
+                echo "Out of Stock<br/>";
+            }
+            echo "<br /><big>Category: " . $categories[0]['category'] . "</big><br />";
+            echo "Tags: ";
+            foreach ($categories as $category){
+                echo $category['category'] . ", ";
+            }
+            echo "<br/><br/><big>Colors:</big>";
+            ?>
+            <div class="container" style="display: flex; flex-wrap: wrap;">
+                <?php
+                foreach ($colors as $color){
+                    echo '<div >';
+                    $image = $color['articleImage'];
+                    echo '<img src="' . $color['articleImage'] . '" alt="' . $color['colorName'] . '" style="max-width: 100px; height: auto; max-height: 80px; display: block; margin: 0px auto;">';
+                    echo "</div>";
+                }
+                ?>
+            </div>
+        </div>
         <!-- Categories, colors, and other information to follow. -->
-    </div>
-    <div class="right-column" style="flex: 1;">
-        <img src="<?php echo $product['productImage']; ?>" alt="Product Image" style="max-width: 100%; height: auto; max-height: 500px; display: block; margin: 0px auto;">
     </div>
 </div>
 

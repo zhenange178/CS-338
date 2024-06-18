@@ -1,10 +1,6 @@
 <?php include 'includes/header.php'; ?>
 <h1>Features — Production Database</h1>
 <div>
-    <h3>View Tables</h3>
-    View all tables <a href="viewDB_sample.php">here</a>.<br />
-</div>
-<div>
     <h3>Edit User Data</h3>
     Edit the user's own data, name etc.<br />
     <code>UPDATE customers SET column WHERE someCondition;</code>

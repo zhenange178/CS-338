@@ -111,12 +111,12 @@ class DatabaseCreator{
         // Create Customer Table
         $sql = "CREATE TABLE IF NOT EXISTS customers (
             customerID INT PRIMARY KEY,
-            customerBirth DATE,
+            firstName VARCHAR(255),
+            lastName VARCHAR(255),
+            customerEmail VARCHAR(255),
             customerPhone VARCHAR(255),
             customerAddress VARCHAR(255),
-            customerEmail VARCHAR(255),
-            firstName VARCHAR(255),
-            lastName VARCHAR(255)
+            customerBirth DATE
         )";
 
         if ($mysqli->query($sql) === TRUE) {

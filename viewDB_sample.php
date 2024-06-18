@@ -1,6 +1,7 @@
+<?php include 'includes/header.php'; ?>
 <?php
 // include
-require 'ViewDB.php';
+require 'includes/ViewDB.php';
 
 function showTable($conn, $tableName){
     $tableDisplay = new ViewDB($conn);
@@ -31,3 +32,5 @@ echo "<br />";
 
 $conn->close();
 ?>
+
+<?php include 'includes/footer.php'; ?>

@@ -49,8 +49,6 @@ $customer = $result->fetch_assoc();
     <button type="submit" name="save">Save Changes</button>
 </form>
 
-<h2>Order History</h2>
-
 <?php
 if (isset($_POST['save'])) {
     $id = $_POST['customerID'];
@@ -79,6 +77,8 @@ if (isset($_POST['save'])) {
 
 $conn->close();
 ?>
+
+<h2>Order History</h2>
 
 
 <?php include 'includes/footer.php'; ?>

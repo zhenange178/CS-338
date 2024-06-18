@@ -1,5 +1,7 @@
 <?php include 'includes/header.php'; ?>
 <?php
+// include
+require 'includes/ViewDB.php';
 // Database credentials
 $servername = "127.0.0.1";
 $username = "user1";
@@ -12,86 +14,69 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
 ?>
 
 <h1>Features — Sample Database</h1>
 
-<form method="post">
-    <button type="submit" name="view_entries">View All Entries</button>
-    <button type="submit" name="clear">Clear</button>
-</form>
-<form method="post">
-    <label>Name: <input type="text" name="name"></label><br>
-    <label>Score Threshold: <input type="number" name="score" step="0.1"></label><br>
-    <label>Threshold Type:
-        <select name="threshold_type">
-            <option value="min">Minimum</option>
-            <option value="max">Maximum</option>
-        </select>
-    </label><br>
-    <button type="submit" name="submit_search">Search</button>
-</form>
+<div>
+    <h3>View Tables</h3>
+    View all tables <a href="viewDB_sample.php">here</a>.<br />
+</div>
 
-<?php
-//view all button
-if (isset($_POST['view_entries'])) {
-    // Select and display data
-    $sql = "SELECT uid, name, score FROM student";
-    $result = $conn->query($sql);
+<div>
+    <h3>Search Products</h3>
+    <form method="post">
+        <label>Product Name: <input type="text" name="name"></label><br>
+        <label>Product ID: <input type="number" name="id"></label><br>
+        <label>Attribute:
+            <select name="attribute">
+                <option value="all_attribute">All</option>
+                <option value="New Arrival">New Arrival</option>
+            </select>
+        </label><br>
+        <label>Availability:
+            <select name="availability">
+                <option value="all_availability">All</option>
+                <option value="Available">Available</option>
+                <option value="NotAvailable">Out of stock</option>
+            </select>
+        </label><br>
+        <button type="submit" name="submit_search">Search</button>
+    </form>
 
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            echo "uid: " . $row["uid"] . " - Name: " . $row["name"] . " - Score: " . $row["score"] . "<br>";
+    <?php
+    //search form
+    if (isset($_POST['submit_search'])) {
+        // Retrieve form data
+        $name = $_POST['name'] ?? '';
+        $id = $_POST['id'] ?? '';
+        $attribute = $_POST['attribute'] ?? 'all_attribute';
+        $availability = $_POST['availability'] ?? 'all_availability';
+
+        // Construct SQL query
+        $query = "SELECT * FROM products WHERE 1=1";
+        
+        // Add conditions based on input
+        if (!empty($name)) {
+            $query .= " AND productName LIKE '%" . mysqli_real_escape_string($conn, $name) . "%'";
         }
-    } else {
-        echo "0 results<br>";
-    }
-}
-
-//clear all button
-if (isset($_POST['clear'])) {
-    echo "";
-}
-
-//search form
-if (isset($_POST['submit_search'])) {
-    $name = $_POST['name'];
-    $score = $_POST['score'];
-    $thresholdType = $_POST['threshold_type'];
-
-    $sql = "SELECT uid, name, score FROM student WHERE ";
-    $conditions = [];
-
-    if (!empty($name)) {
-        $conditions[] = "name LIKE '%" . $conn->real_escape_string($name) . "%'";
-    }
-    if (!empty($score)) {
-        if ($thresholdType == "min") {
-            $conditions[] = "score >= " . floatval($score);
-        } else {
-            $conditions[] = "score <= " . floatval($score);
+        if (!empty($id)) {
+            $query .= " AND productID LIKE '%" . mysqli_real_escape_string($conn, $id) . "%'";
         }
-    }
-
-    if (count($conditions) > 0) {
-        $sql .= implode(" AND ", $conditions);
-    } else {
-        $sql .= "1"; // Always true condition to fetch all if no filters are set
-    }
-
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        echo "<p>Results:</p>";
-        while($row = $result->fetch_assoc()) {
-            echo "UID: " . $row["uid"] . " - Name: " . $row["name"] . " - Score: " . $row["score"] . "<br>";
+        if ($attribute != 'all_attribute') {
+            $query .= " AND sellingAttribute = '" . mysqli_real_escape_string($conn, $attribute) . "'";
         }
-    } else {
-        echo "No results found.<br>";
+        if ($availability != 'all_availability') {
+            $query .= " AND stock = '" . mysqli_real_escape_string($conn, $availability) . "'";
+        }
+        echo "<code>$query</code>";
+        echo"<br/>";
+        $tableDisplay = new ViewDB($conn);
+        $tableDisplay->displayTable($query);
+
     }
-}
-$conn->close();
-?>
+    $conn->close();
+    ?>
+</div>
 
 <?php include 'includes/footer.php'; ?>

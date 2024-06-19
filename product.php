@@ -13,12 +13,14 @@ if ($conn->connect_error) {
 
 if (isset($_GET['id'])) {
     $productId = $_GET['id'];
+    $customerID = 100000; // hardcoded
 
     $product = null;
     $categories = [];
     $colors = [];
     $prices = [];
-    $reviews = [];
+    $allReviews = [];
+    $myReviews = [];
 
     // SQL: get product table
     $sqlProduct = "SELECT * FROM products WHERE productID = '$productId'";
@@ -48,8 +50,16 @@ if (isset($_GET['id'])) {
         $prices[] = $row;
     }
 
-    // SQL: get reviews table
-    $sqlReviews = "SELECT * FROM reviews WHERE productID = '$productId'";
+    // SQL: get my reviews table
+    $sqlMyReviews = "SELECT * FROM reviews WHERE productID = '$productId' AND customerID = '$customerID'";
+    $resultMyReviews = mysqli_query($conn, $sqlMyReviews);
+    while ($row = $resultMyReviews->fetch_assoc()) {
+        $myReviews[] = $row;
+    }
+    $myReviews = array_reverse($myReviews); // newest first
+
+    // SQL: get other reviews table
+    $sqlReviews = "SELECT * FROM reviews WHERE productID = '$productId' AND customerID != '$customerID'";
     $resultReviews = mysqli_query($conn, $sqlReviews);
     while ($row = $resultReviews->fetch_assoc()) {
         $reviews[] = $row;
@@ -136,18 +146,19 @@ if (isset($_GET['id'])) {
     </div>
 </div>
 
-<h2>Reviews (<?php echo count($reviews)?>)</h2>
+<h2>Reviews (<?php echo (count($reviews) + count($myReviews))?>)</h2>
 <form method="post">
     <label>Leave a review:
         <select name="stars">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
+            <option value="" disabled selected>Select a Rating:</option>
+            <option value="1">★☆☆☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="4">★★★★☆</option>
+            <option value="5">★★★★★</option>
         </select>
     </label><br/>
-    <textarea name="comment" placeholder="Leave a comment..." " style="width: 100%;"></textarea><br/>
+    <textarea name="comment" placeholder="Leave a comment..." style="width: 100%;"></textarea><br/>
     <!-- <textarea name="comment" placeholder="Leave a comment..." style="width: 100%;
             font-size:16px;
             height: auto; 
@@ -159,36 +170,41 @@ if (isset($_GET['id'])) {
             overflow-wrap: break-word;
             word-wrap: break-word;"></textarea> -->
     <button type="submit" name="submit_review">Submit</button>
-</form><br/>
+</form>
 
 <?php
 // submit review
 if (isset($_POST['submit_review'])) {
     // Retrieve form data
-    $rating = $_POST['stars'];
-    $comment = $_POST['comment'];
-    $customerID = 100000; // hardcoded
+    if (isset($_POST['stars'])){
+        $rating = $_POST['stars'];
+        $comment = $_POST['comment'];
 
-    // SQL: insert review
-    $stmt = $conn->prepare("INSERT INTO reviews (customerID, productID, rating, comment) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iiis", 
-        $customerID,
-        $productId,
-        $rating,
-        $comment
-    );
-    if (!$stmt->execute()) {
-        echo "Error adding review: " . $stmt->error . "<br/><br/>";
+        // SQL: insert review
+        $stmt = $conn->prepare("INSERT INTO reviews (customerID, productID, rating, comment) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("iiis", 
+            $customerID,
+            $productId,
+            $rating,
+            $comment
+        );
+        if (!$stmt->execute()) {
+            echo "Error adding review: " . $stmt->error . "<br/>";
+        } else {
+            header("Location: product.php?id=" . $productId);
+            exit();
+        }
     } else {
-        header("Location: product.php?id=" . $productId);
-        exit();
+        echo "Please select a rating.<br/>";
     }
 }
 
-// All reviews
-foreach ($reviews as $review) {
+// Reviews list
+echo "<br/>";
+// My Reviews first
+foreach ($myReviews as $review) {
     // stars
-    echo "User: " . $review['customerID'] . "<br/>";
+    echo "<big>Me</big><br/>";
     $stars = $review['rating'];
     for ($star = 1; $star <= $stars; $star++){
         echo "★";
@@ -196,7 +212,28 @@ foreach ($reviews as $review) {
     for ($blankStar = $stars + 1; $blankStar <= 5; $blankStar++){
         echo "☆";
     }
-    echo " " . $review['comment'] . "<br/><br/>";
+    echo " <a href='../review.php?id={$review["reviewID"]}'>edit</a>";
+    if ($review['comment']){
+        echo "<br/>";
+    }
+    echo $review['comment'] . "<br/><br/><br/>";
+}
+
+
+foreach ($reviews as $review) {
+    // stars
+    echo "<big>User " . $review['customerID'] . "</big><br/>";
+    $stars = $review['rating'];
+    for ($star = 1; $star <= $stars; $star++){
+        echo "★";
+    }
+    for ($blankStar = $stars + 1; $blankStar <= 5; $blankStar++){
+        echo "☆";
+    }
+    if ($review['comment']){
+        echo "<br/>";
+    }
+    echo $review['comment'] . "<br/><br/><br/>";
 }
 ?>
 <?php endif; ?>

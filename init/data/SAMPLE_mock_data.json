@@ -1151,7 +1151,7 @@
         {
             "ReviewID": 410003,
             "CustomerID": 110003,
-            "Rating": 2,
+            "Rating": 5,
             "Comment": "Very satisfied with the quality.",
             "ProductID": "1239088004"
         },
@@ -1165,7 +1165,7 @@
         {
             "ReviewID": 410005,
             "CustomerID": 110005,
-            "Rating": 1,
+            "Rating": 5,
             "Comment": "Exceeded my expectations!",
             "ProductID": "1239088004"
         },
@@ -1179,7 +1179,7 @@
         {
             "ReviewID": 410007,
             "CustomerID": 110007,
-            "Rating": 5,
+            "Rating": 2,
             "Comment": "Not as expected.",
             "ProductID": "1227103002"
         },
@@ -1207,7 +1207,7 @@
         {
             "ReviewID": 410011,
             "CustomerID": 110008,
-            "Rating": 5,
+            "Rating": 1,
             "Comment": "Poor quality, not recommended.",
             "ProductID": "0806581027"
         },

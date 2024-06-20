@@ -19,7 +19,7 @@ if (isset($_GET['id'])) {
     $categories = [];
     $colors = [];
     $prices = [];
-    $allReviews = [];
+    $reviews = [];
     $myReviews = [];
 
     // SQL: get product table
@@ -56,7 +56,9 @@ if (isset($_GET['id'])) {
     while ($row = $resultMyReviews->fetch_assoc()) {
         $myReviews[] = $row;
     }
-    $myReviews = array_reverse($myReviews); // newest first
+    if ($myReviews){
+        $myReviews = array_reverse($myReviews); // newest first
+    }
 
     // SQL: get other reviews table
     $sqlReviews = "SELECT * FROM reviews WHERE productID = '$productId' AND customerID != '$customerID'";
@@ -64,7 +66,9 @@ if (isset($_GET['id'])) {
     while ($row = $resultReviews->fetch_assoc()) {
         $reviews[] = $row;
     }
-    $reviews = array_reverse($reviews); // newest first
+    if ($reviews){
+        $reviews = array_reverse($reviews); // newest first
+    }
 
     if ($product) {
         echo "<br/>";

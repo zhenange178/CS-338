@@ -141,6 +141,7 @@
             "CustomerID": 110001,
             "TrackingID": 276255,
             "DateTime": "2020-03-25 17:16:59",
+            "PromoCode": "15RxF",
             "Products": [
                 {
                     "ProductID": "1229683004",
@@ -177,6 +178,7 @@
             "CustomerID": 110001,
             "TrackingID": 735050,
             "DateTime": "2020-03-12 09:08:51",
+            "PromoCode": "e5CAn",
             "Products": [
                 {
                     "ProductID": "1037593031",
@@ -285,6 +287,7 @@
             "CustomerID": 110003,
             "TrackingID": 795990,
             "DateTime": "2020-03-22 21:15:56",
+            "PromoCode": "CeR7g",
             "Products": [
                 {
                     "ProductID": "0910568001",
@@ -357,6 +360,7 @@
             "CustomerID": 110004,
             "TrackingID": 836472,
             "DateTime": "2021-01-15 09:20:58",
+            "PromoCode": "MVeOw",
             "Products": [
                 {
                     "ProductID": "1154451010",
@@ -593,6 +597,7 @@
             "CustomerID": 110005,
             "TrackingID": 788839,
             "DateTime": "2022-08-14 06:51:55",
+            "PromoCode": "PHyQ6",
             "Products": [
                 {
                     "ProductID": "1159381020",
@@ -681,6 +686,7 @@
             "CustomerID": 110006,
             "TrackingID": 526567,
             "DateTime": "2022-04-08 14:26:03",
+            "PromoCode": "aLY1P",
             "Products": [
                 {
                     "ProductID": "1247397001",
@@ -757,6 +763,7 @@
             "CustomerID": 110007,
             "TrackingID": 275364,
             "DateTime": "2021-04-28 03:31:50",
+            "PromoCode": "f30ZI",
             "Products": [
                 {
                     "ProductID": "0742400163",
@@ -853,6 +860,7 @@
             "CustomerID": 110008,
             "TrackingID": 745875,
             "DateTime": "2022-01-10 07:28:01",
+            "PromoCode": "PHyQ6",
             "Products": [
                 {
                     "ProductID": "1239088004",
@@ -889,6 +897,7 @@
             "CustomerID": 110008,
             "TrackingID": 809890,
             "DateTime": "2020-11-11 07:28:58",
+            "PromoCode": "Sq9Du",
             "Products": [
                 {
                     "ProductID": "1223929002",
@@ -1033,6 +1042,7 @@
             "CustomerID": 110009,
             "TrackingID": 133861,
             "DateTime": "2022-08-25 22:29:27",
+            "PromoCode": "5CW0o",
             "Products": [
                 {
                     "ProductID": "0714026068",
@@ -1069,6 +1079,7 @@
             "CustomerID": 110010,
             "TrackingID": 578889,
             "DateTime": "2021-01-09 09:32:44",
+            "PromoCode": "15RxF",
             "Products": [
                 {
                     "ProductID": "1003662002",

@@ -33,11 +33,11 @@ $productsData = $populator->readJson('data/hm_product_list.json');
 $mockData = $populator->readJson('data/mock_data.json');
 
 $populator->importProducts($mysqli, $productsData);
+$populator->importPromoCodes($mysqli, $mockData);
 $populator->importCustomers($mysqli, $mockData);
 $populator->importMemberships($mysqli, $mockData);
 $populator->importOrders($mysqli, $mockData);
 $populator->importReviews($mysqli, $mockData);
-$populator->importPromoCodes($mysqli, $mockData);
 
 $endTime = microtime(true);
 $executionTime = $endTime - $startTime;

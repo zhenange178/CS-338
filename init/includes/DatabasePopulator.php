@@ -163,7 +163,7 @@ class DatabasePopulator {
     }
 
     public function importOrders($mysqli, $ordersData) {
-        $ordersStmt = $mysqli->prepare("INSERT IGNORE INTO orders (orderID, customerID, trackingID, orderDateTime) VALUES (?, ?, ?, ?)");
+        $ordersStmt = $mysqli->prepare("INSERT IGNORE INTO orders (orderID, customerID, trackingID, orderDateTime, promoCodeUsed) VALUES (?, ?, ?, ?, ?)");
         $returnsStmt = $mysqli->prepare("INSERT IGNORE INTO returnedOrders (orderID, returnDateTime, returnReason) VALUES (?, ?, ?)");
         $detailsStmt = $mysqli->prepare("INSERT IGNORE INTO orderDetails (orderID, productID, count) VALUES (?, ?, ?)");
         
@@ -175,12 +175,20 @@ class DatabasePopulator {
         foreach ($ordersData['orders'] as $order) {
             $success = true;
             $orderID = $order['OrderID'];
+            $promoCode = null;
+            
+            // add promo code
+            if (isset($order['PromoCode'])) {
+                $promoCode = $order['PromoCode'];
+            }
+            
             // orders
-            $ordersStmt->bind_param("iiis",
+            $ordersStmt->bind_param("iiiss",
                 $orderID,
                 $order['CustomerID'],
                 $order['TrackingID'],
-                $order['DateTime']
+                $order['DateTime'],
+                $promoCode
             );
             if (!$ordersStmt->execute()){
                 $success = false;

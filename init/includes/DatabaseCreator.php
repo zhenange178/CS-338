@@ -31,6 +31,25 @@ class DatabaseCreator{
         $tablesCreated = true;
         echo "Creating tables...<br/>";
 
+        // Create promo codes Table
+        $sql = "CREATE TABLE IF NOT EXISTS promoCodes (
+            promoCode VARCHAR(255) PRIMARY KEY,
+            source VARCHAR(255),
+            totalAvailable INT,
+            isMemberOnly BOOLEAN NOT NULL,
+            expiration DATE,
+            discountType VARCHAR(255) NOT NULL,
+            discountAmount FLOAT NOT NULL,
+            restrictionAmount FLOAT
+        )";
+
+        if ($mysqli->query($sql) === TRUE) {
+            // echo "Table 'promoCodes' created<br />";
+        } else {
+            echo "Error creating table 'promoCodes': " . $mysqli->error . "<br />";
+            $tablesCreated = false;
+        }
+
         // Create Product Table
         $sql = "CREATE TABLE IF NOT EXISTS products (
             productID INT PRIMARY KEY,
@@ -153,9 +172,15 @@ class DatabaseCreator{
             customerID INT,
             trackingID INT NOT NULL,
             orderDateTime DATETIME NOT NULL,
+            promoCodeUsed VARCHAR(255),
             CONSTRAINT fk_customer_order
                 FOREIGN KEY (customerID) 
                 REFERENCES customers(customerID)
+                ON DELETE SET NULL
+                ON UPDATE CASCADE,
+            CONSTRAINT fk_code_order
+                FOREIGN KEY (promoCodeUsed) 
+                REFERENCES promoCodes(promoCode)
                 ON DELETE SET NULL
                 ON UPDATE CASCADE
         )";
@@ -233,25 +258,6 @@ class DatabaseCreator{
             // echo "Table 'reviews' created<br />";
         } else {
             echo "Error creating table 'reviews': " . $mysqli->error . "<br />";
-            $tablesCreated = false;
-        }
-
-        // Create promo codes Table
-        $sql = "CREATE TABLE IF NOT EXISTS promoCodes (
-            promoCode VARCHAR(255) PRIMARY KEY,
-            source VARCHAR(255),
-            totalAvailable INT,
-            isMemberOnly BOOLEAN NOT NULL,
-            expiration DATE,
-            discountType VARCHAR(255) NOT NULL,
-            discountAmount FLOAT NOT NULL,
-            restrictionAmount FLOAT
-        )";
-
-        if ($mysqli->query($sql) === TRUE) {
-            // echo "Table 'promoCodes' created<br />";
-        } else {
-            echo "Error creating table 'promoCodes': " . $mysqli->error . "<br />";
             $tablesCreated = false;
         }
 

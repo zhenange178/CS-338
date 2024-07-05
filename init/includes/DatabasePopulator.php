@@ -28,10 +28,11 @@ class DatabasePopulator {
         foreach ($productsData['products'] as $product) {
             // Import products
             $success = true;
+            $url = 'https://www2.hm.com/' . $product['url'];
             $productStmt->bind_param("isssdssi",
                 $product['id'],
                 $product['productName'],
-                $product['url'],
+                $url,
                 $product['modelImage'],
                 $product['quantity'],
                 $product['sellingAttribute'],

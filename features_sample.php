@@ -75,6 +75,17 @@ if ($conn->connect_error) {
 
     }
     $conn->close();
+
+    // For later use: promocode validator
+    function isPromoCodeValid($discountType, $restrictionAmount, $orderTotal){
+        if ($discountType === 'amount_off'){
+            return $orderTotal > $restrictionAmount;
+        }
+        if ($discountType === 'percent_off'){
+            return $orderTotal < $restrictionAmount;
+        }
+    }
+    
     ?>
 </div>
 

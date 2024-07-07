@@ -54,7 +54,21 @@ Great. Now you want to start the PHP/MySQL server. On your local machine, the st
 2. Navigate to `http://127.0.0.1:8000`. This is the local homepage.
 
 ## Current Features
-* 
+1. Comment management
+- Allowing uses to view the comments in product page
+- Allow users to write reviews for the products that they've purchased
+- Users can update the reviews that they've posted
+- Users are free to delete any of their posted comments
+2. Promo code management
+- HM management team can see a ranking of the most used promo code
+3. Inventory management 
+- HM management team will have access to their stock information
+4. Product search
+- Users can search product using their product name, id, selling attribute, or availability
+5. Distribution of membership
+- the HM management team can see the distribution of membership by their rankings through a histogram. 
+6. Most popular customer
+- HM management team will be able to see which customer placed the most orders from HM
 
 ## File Structure
 

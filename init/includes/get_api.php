@@ -130,7 +130,7 @@ echo "Writing data...<br />";
 
 $jsonProductList = json_encode($finalData, JSON_PRETTY_PRINT);
 
-$fileName = '../SAMPLE_hm_product_list.json';
+$fileName = 'data/hm_product_list.json';
 
 if (file_put_contents($fileName, $jsonProductList)) {
     $endTime = microtime(true);

@@ -103,6 +103,52 @@ class DataGenerator {
     }
 
     /**
+     * getRandomReasonAndRating
+     * Updated randomReason to return both comment and rating
+     */
+    function getRandomReasonAndRating() {
+        $reasons = [
+            'Defective item' => 1,
+            'Wrong item shipped' => 1,
+            'Item not as described' => 2,
+            'Changed mind' => 3,
+            'Found a better price' => 3,
+            'Excellent product quality' => 5,
+            'Fast shipping' => 5,
+            'Great customer service' => 5,
+            'Product as described' => 4,
+            'Highly recommend' => 5,
+            'Very satisfied' => 5,
+            'Easy to use' => 4,
+            'Good value for money' => 4,
+            'Exceeded expectations' => 5,
+            'Well packaged' => 4,
+            'Repeat purchase' => 5,
+            'Gift purchase' => 4,
+            'Will buy again' => 5,
+            'Satisfied with purchase' => 4,
+            'Product arrived early' => 5,
+            'Good communication' => 4,
+            'Quality matches price' => 3,
+            'Just what I needed' => 5,
+            'Love this product' => 5,
+            'Would recommend to others' => 5,
+        ];
+    
+        // Get a random key
+        $randomKey = array_rand($reasons);
+    
+        // Get the reason and corresponding rating
+        $randomReason = $randomKey;
+        $rating = $reasons[$randomKey];
+    
+        return [
+            'reason' => $randomReason,
+            'rating' => $rating
+        ];
+    }
+
+    /**
      * randomComment
      * 
      * @return string a random review comment out of predefined values
@@ -222,6 +268,32 @@ class DataGenerator {
         flush();
 
         /**
+        * Generate Promo Codes
+        */
+
+        // Generate codes data
+        $codes = [];
+        $codeValues = [];
+        for ($i = 0; $i < $numCodes; $i++) {
+            $randCode = $this->randomString();
+            $codeValues[] = $randCode;
+            $code = [
+                'PromoCode' => $randCode,
+                'Source' => '',
+                'TotalAvailable' => rand(10, 1000),
+                'isMemberOnly' => $this->indicator(0.5),
+                'Expiration' => $this->randomDate('2024-06-01', '2034-01-01'),
+                'DiscountType' => $this->randomDiscount(),
+                'DiscountAmount' => rand(5, 50),
+                'RestrictionAmount' => rand(50, 150)
+            ];
+            $codes[] = $code;
+        }
+
+        echo count($codes) . ' promo codes, ';
+        flush();
+
+        /**
          * Generate Orders
          */
 
@@ -236,6 +308,10 @@ class DataGenerator {
         $orderId = $idOrder + 1;
         foreach ($customers as $customer) {
             $numOrders = rand($customerOrdersMin, $customerOrdersMax);
+            // Randomly increase num orders by alot
+            if ($this->indicator(0.05)){
+                $numOrders = 3 * rand(3, 5);
+            }
             for ($j = 0; $j < $numOrders; $j++) {
                 // Generate random list of products
                 $products = [];
@@ -262,6 +338,10 @@ class DataGenerator {
                     'DateTime' => $this->randomDateTime('2020-01-01', '2022-12-31'),
                     'Products' => $productsCounts
                 ];
+                // Randomly add promo code
+                if (rand(0, 1)){
+                    $order['PromoCode'] = $codeValues[array_rand($codeValues)];
+                }
 
                 $isReturned = (bool)rand(0, 1);
                 if ($isReturned) {
@@ -287,46 +367,25 @@ class DataGenerator {
         foreach ($customers as $customer) {
             $numReviews = rand($customerReviewsMin, $customerReviewsMax); 
             for ($i = 0; $i < $numReviews; $i++) {
+                $reviewData = $this->getRandomReasonAndRating();
                 $review = [
                     'ReviewID' => ++$idReview,
                     'CustomerID' => $customer['ID'],
-                    'Rating' => rand(1, 5),  // Random rating out of 5
-                    'Comment' => '',  // Assume blank comments for simplicity
                     'ProductID' => $productIds[array_rand($productIds)]  // Random product ID from the list
                 ];
                 if (rand(0, 1)) {  // Randomly decide to add a comment
-                    $review['Comment'] = $this->randomComment();
+                    $review['Comment'] = $reviewData['reason'];
+                    $review['Rating'] = $reviewData['rating'];
+                } else {
+                    $review['Rating'] = rand(1, 5);
+                    $review['Comment'] = '';
                 }
                 $reviews[] = $review;
             }
         }
 
-        echo count($reviews) . ' reviews, ';
+        echo count($reviews) . ' reviews.<br/>';
         flush();
-
-        /**
-         * Generate Promo Codes
-         */
-
-        // Generate codes data
-        $codes = [];
-        for ($i = 0; $i < $numCodes; $i++) {
-            $code = [
-                'PromoCode' => $this->randomString(),
-                'Source' => '',
-                'TotalAvailable' => rand(10, 1000),
-                'isMemberOnly' => $this->indicator(0.5),
-                'Expiration' => $this->randomDate('2024-06-01', '2034-01-01'),
-                'DiscountType' => $this->randomDiscount(),
-                'DiscountAmount' => rand(5, 50),
-                'RestrictionAmount' => rand(50, 150)
-            ];
-            $codes[] = $code;
-        }
-
-        echo count($codes) . ' promo codes.<br/>';
-        flush();
-
 
         // Prepare combined data
         $data = [

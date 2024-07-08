@@ -1,34 +1,92 @@
 <?php include 'includes/header.php'; ?>
-<h1>Features — Production Database</h1>
+<?php
+// include
+require 'includes/ViewDB.php';
+// Database credentials
+$servername = "127.0.0.1";
+$username = "user1";
+$password = "password";
+$dbname = "hmdatabase";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+?>
+
+<h1>Features — Sample Database</h1>
+
 <div>
-    <h3>Edit User Data</h3>
-    Edit the user's own data, name etc.<br />
-    <code>UPDATE customers SET column WHERE someCondition;</code>
+    <h3>View Tables</h3>
+    View all tables <a href="viewDB_production.php">here</a>.<br />
 </div>
+
 <div>
-    <h3>Products Simple Search</h3>
-    Search for products using name, id, or availablility.<br/>
-    <code>SELECT id FROM products WHERE id = '1234' OR name LIKE '%something%';</code>
-</div>
-<div>
-    <h3>Products Advanced Search</h3>
-    Search for products using category/price/colors.<br/>
-    Why "different" feature? Above data is stored in seperate tables, need different SQL statements to join tables.<br/>
-    <code>SELECT price.product_id FROM price INNER JOIN color ON price.product_id = color.product_id WHERE price.price_condition = somePriceCondition AND color.color_condition = someColorCondition;</code>
-</div>
-<div>
-    <h3>Create Review</h3>
-    Leave review, edit review, delete review<br />
-    <code>INSERT INTO; UPDATE; DELETE;</code>
-</div>
-<div>
-    <h3>Create Order</h3>
-    Create a new order, add products, promo code?
-</div>
-<div>
-    <h3>Return Order</h3>
-    (How would we want to implement returns?)<br/>
-    (Inventory section? - all items bought minus all items returned?)
+    <h3>Search Products</h3>
+    <form method="post">
+        <label>Product Name: <input type="text" name="name"></label><br>
+        <label>Product ID: <input type="number" name="id"></label><br>
+        <label>Attribute:
+            <select name="attribute">
+                <option value="all_attribute">All</option>
+                <option value="New Arrival">New Arrival</option>
+            </select>
+        </label><br>
+        <label>Availability:
+            <select name="availability">
+                <option value="all_availability">All</option>
+                <option value="Available">Available</option>
+                <option value="NotAvailable">Out of stock</option>
+            </select>
+        </label><br>
+        <button type="submit" name="submit_search">Search</button>
+    </form><br/>
+
+    <?php
+    //search form
+    if (isset($_POST['submit_search'])) {
+        // Retrieve form data
+        $name = $_POST['name'] ?? '';
+        $id = $_POST['id'] ?? '';
+        $attribute = $_POST['attribute'] ?? 'all_attribute';
+        $availability = $_POST['availability'] ?? 'all_availability';
+
+        // Construct SQL query
+        $query = "SELECT * FROM products WHERE 1=1";
+        
+        // Add conditions based on input
+        if (!empty($name)) {
+            $query .= " AND productName LIKE '%" . mysqli_real_escape_string($conn, $name) . "%'";
+        }
+        if (!empty($id)) {
+            $query .= " AND productID LIKE '%" . mysqli_real_escape_string($conn, $id) . "%'";
+        }
+        if ($attribute != 'all_attribute') {
+            $query .= " AND sellingAttribute = '" . mysqli_real_escape_string($conn, $attribute) . "'";
+        }
+        if ($availability != 'all_availability') {
+            $query .= " AND stock = '" . mysqli_real_escape_string($conn, $availability) . "'";
+        }
+        echo "<big><code>$query</code></big><br/>";
+        $tableDisplay = new ViewDB($conn);
+        $tableDisplay->listProducts($query);
+
+    }
+    $conn->close();
+
+    // For later use: promocode validator
+    function isPromoCodeValid($discountType, $restrictionAmount, $orderTotal){
+        if ($discountType === 'amount_off'){
+            return $orderTotal > $restrictionAmount;
+        }
+        if ($discountType === 'percent_off'){
+            return $orderTotal < $restrictionAmount;
+        }
+    }
+    
+    ?>
 </div>
 
 <?php include 'includes/footer.php'; ?>

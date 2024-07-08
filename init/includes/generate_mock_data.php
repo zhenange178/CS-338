@@ -22,7 +22,7 @@ $customerOrdersMax = 5;
 $chanceReturn = 0.3;
 $customerReviewsMin = 0;
 $customerReviewsMax = 3;
-$numCodes = 250;
+$numCodes = 30;
 
 $generator = new DataGenerator();
 $generator->generateData($idCustomer, $idMembership, $idOrder, $idReview, $mockDataPath, $productDataPath, $numCustomers, $chanceMember, $customerOrdersMin, $customerOrdersMax, $chanceReturn, $customerReviewsMin, $customerReviewsMax, $numCodes);

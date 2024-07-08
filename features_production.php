@@ -76,7 +76,7 @@ if ($conn->connect_error) {
         }
         echo "<big><code>$query</code></big><br/>";
         $tableDisplay = new ViewDB($conn);
-        $tableDisplay->listProducts($query);
+        $tableDisplay->listProducts($query, FALSE);
 
     }
     $conn->close();

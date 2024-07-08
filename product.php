@@ -3,7 +3,12 @@
 $servername = "127.0.0.1";
 $username = "user1";
 $password = "password";
-$dbname = "sampledatabase";
+$hmdatabase = "sampledatabase";
+if (isset($_GET['data'])) {
+    if ($_GET['data'] === 'sample'){
+        $dbname = "sampledatabase";
+    }
+}
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

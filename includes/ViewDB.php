@@ -59,7 +59,7 @@ class ViewDB {
         }
     }
 
-    public function listProducts($sql){
+    public function listProducts($sql, $isSample){
         
         echo $this->getStyles($sql);
         $result = $this->conn->query($sql);
@@ -86,7 +86,12 @@ class ViewDB {
                     $cellValue = $row[$column];
                     echo "<td>{$cellValue}</td>";
                 }
-                echo "<td><a href='../product.php?id={$productId}'>Details</a></td>";
+                if ($isSample) {
+                    echo "<td><a href = '..?product.php?id={productID}&data=sample'>Details</a></td>";
+                }
+               else {
+                   echo "<td><a href='..?product.php?id={productID}'>Details</a></td>";
+                }
                 echo "</tr>";
             }
 

@@ -10,8 +10,7 @@
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/initialize.php">Initialize</a></li>
-            <li><a href="/features_sample.php">Features (Sample)</a></li>
-            <li><a href="/features_production.php">Features (Production)</a></li>
+            <li><a href="/features_production.php">Features</a></li>
             <li style="float:right"><a href="/me.php">My Account</a></li>
             <li style="float:right"><a href="/admin_home.php">Admin Home</a></li>
         </ul>

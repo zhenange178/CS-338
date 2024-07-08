@@ -16,7 +16,12 @@ if ($conn->connect_error) {
 }
 ?>
 
-<h1>Features — Sample Database</h1>
+<h1>Features — Production Database</h1>
+
+<div>
+    <h3>Sample Data</h3>
+    View features on sample data <a href="features_sample.php">here</a>.<br />
+</div>
 
 <div>
     <h3>View Tables</h3>

@@ -3,7 +3,7 @@
     <p><a href="/initialize.php">Back</a></p>
 </div>
 <h3>Initialize Everything</h3>
-
+<?php include '../init/includes/get_api.php'; ?>
 <?php include '../init/includes/generate_mock_data.php'; ?>
 <?php include '../init/includes/create_database.php'; ?>
 <?php include '../init/includes/populate_database_all.php'; ?>

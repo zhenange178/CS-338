@@ -317,7 +317,7 @@
                 }
             ],
             "availability": {
-                "stockState": "Available",
+                "stockState": "NotAvailable",
                 "comingSoon": false
             },
             "swatches": [
@@ -1736,7 +1736,7 @@
                 }
             ],
             "availability": {
-                "stockState": "Available",
+                "stockState": "NotAvailable",
                 "comingSoon": false
             },
             "swatches": [
@@ -2085,7 +2085,7 @@
                 }
             ],
             "availability": {
-                "stockState": "Available",
+                "stockState": "NotAvailable",
                 "comingSoon": false
             },
             "swatches": [

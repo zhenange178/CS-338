@@ -17,9 +17,19 @@ if ($conn->connect_error) {
 ?>
 
 <h1>Admin Center — Production</h1>
+<div style="border: 1px solid black; padding: 5px; width: 50%;">
+<b>Contents</b>
+<ul>
+    <li><a href="#promocode">Top 10 Promo Codes</a></li>
+    <li><a href="#outofstock">Out of Stock Items</a></li>
+    <li><a href="#memberranks">Membership Distribution</a></li>
+    <li><a href="#bestcustomer">Most Popular Customer</a></li>
+</ul>
+</div>
 <h2>Sample Database Admin</h2>
 For sample database admin center, click <a href="admin_home_sample.php">here</a>.<br/>
 
+<section id="promocode">
 <div>
 <h2>Top 10 Most Used Promo Codes</h2>
 <?php
@@ -29,7 +39,7 @@ $sql = "SELECT promoCodeUsed, COUNT(*) as orderCount FROM orders WHERE promoCode
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    echo "<table style='border-collapse: collapse; width: 100%; border: 1px solid #ddd;'>";
+    echo "<table style='border-collapse: collapse; width: 80%; border: 1px solid #ddd;'>";
     echo "<tr><th style='border: 1px solid #ddd; padding: 8px;'>Promo Code</th><th style='border: 1px solid #ddd; padding: 8px;'>Order Count</th></tr>";
     while($row = $result->fetch_assoc()) {
         echo "<tr><td style='border: 1px solid #ddd; padding: 8px;'>".$row["promoCodeUsed"]."</td><td style='border: 1px solid #ddd; padding: 8px;'>".$row["orderCount"]."</td></tr>";
@@ -38,8 +48,6 @@ if ($result->num_rows > 0) {
 } else {
     echo "No results found";
 }
-
-$conn->close();
 ?>
 <h3>Retrieve Promo Code Attributes</h3>
     <form method="post">
@@ -79,21 +87,85 @@ if (isset($_POST['submit_search'])) {
 
     // Fetch values
     if ($stmt->fetch()) {
-        // Display retrieved attributes
-        echo "<h3>Promo Code Attributes</h3>";
-        echo "<table>";
-        echo "<tr><th>Promo Code</th><th>Discount Type</th><th>Discount Amount</th><th>Restriction Amount</th></tr>";
-        echo "<tr><td>$promoCode</td><td>$discountType</td><td>$discountAmount</td><td>$restrictionAmount</td></tr>";
-        echo "</table>";
+        if ($discountType === 'amount_off'){
+            echo "Promo code $promoCode: \$$discountAmount off orders over \$$restrictionAmount";
+        } else{
+            echo "Promo code $promoCode: $discountAmount% off orders under \$$restrictionAmount";
+        }
     } else {
         echo "<p>Promo code '$promoCode' not found.</p>";
     }
 
     // Close statement and connection
     $stmt->close();
-    $conn->close();
 }
 ?>
+<br/>
+</section>
 
-<h2></h2>
+<section id="outofstock">
+<h2>Out of Stock Items</h2>
+<?php
+// SQL: Select out of stock items
+$sql = "SELECT productID FROM products WHERE Stock = 'NotAvailable'";
+
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    echo "<table style='border-collapse: collapse; border: 1px solid #ddd;'>";
+    echo "<tr><th style='border: 1px solid #ddd; padding: 8px;'>Product ID</th></tr>";
+    while($row = $result->fetch_assoc()) {
+        $productId = $row["productID"];
+        echo "<tr><td style='border: 1px solid #ddd; padding: 8px;'><a href='product.php?id={$productId}'>{$productId}</a></td></tr>";
+    }
+    echo "</table>";
+} else {
+    echo "No results found";
+}
+?>
+<br/>
+</section>
+
+<section id="memberranks">
+<h2>Member Rank Distribution</h2>
+<?php
+// SQL: Select member count per rank
+$sql = "SELECT memberRank FROM memberships GROUP BY memberRank";
+
+$result = $conn->query($sql);
+
+// if ($result->num_rows > 0) {
+//     echo "<table style='border-collapse: collapse; border: 1px solid #ddd;'>";
+//     echo "<tr><th style='border: 1px solid #ddd; padding: 8px;'>Product ID</th></tr>";
+//     while($row = $result->fetch_assoc()) {
+//         echo "<tr><td style='border: 1px solid #ddd; padding: 8px;'>".$row["productID"]."</td></tr>";
+//     }
+//     echo "</table>";
+// } else {
+//     echo "No results found";
+// }
+?>
+<br/>
+</section>
+
+<section id="bestcustomer">
+<h2>Most Popular Customer</h2>
+<?php
+// SQL: Select member count per rank
+$sql = "SELECT customerID, COUNT(orderID) as order_count FROM orders Group By customerID Order by order_count DESC LIMIT 1";
+
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    echo "Customer " . $row['customerID'] . " has the most orders: " . $row['order_count'];
+} else {
+    echo "No results found";
+}
+?>
+</section>
+
+<?php
+$conn->close();
+?>
 <?php include 'includes/footer.php'; ?>

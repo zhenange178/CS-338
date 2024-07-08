@@ -128,7 +128,42 @@ if ($result->num_rows > 0) {
 
 <section id="memberranks">
 <h2>Member Rank Distribution</h2>
-Work in progress.
+<?php
+$sql = "SELECT memberRank, COUNT(*) as count FROM memberships GROUP BY memberRank";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // Data array to store results
+    $data = array();
+
+    // Fetch data from each row
+    while($row = $result->fetch_assoc()) {
+        $memberRank = $row["memberRank"];
+        $count = $row["count"];
+
+        // Store in data array
+        $data[$memberRank] = $count;
+    }
+
+    // Close result set
+    $result->close();
+
+    // Display histogram
+    echo "<h2>Member Rank Histogram</h2>";
+    echo "Check the most popular membership ranks.";
+    echo "<ul>";
+    foreach ($data as $rank => $count) {
+        echo "<li>$rank: ";
+        for ($i = 0; $i < $count; $i++) {
+            echo "■"; // Display a block for each count
+        }
+        echo "</li>";
+    }
+    echo "</ul>";
+} else {
+    echo "No results found";
+}
+?>
 
 <br/>
 </section>

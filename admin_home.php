@@ -128,23 +128,8 @@ if ($result->num_rows > 0) {
 
 <section id="memberranks">
 <h2>Member Rank Distribution</h2>
-<?php
-// SQL: Select member count per rank
-$sql = "SELECT memberRank FROM memberships GROUP BY memberRank";
+Work in progress.
 
-$result = $conn->query($sql);
-
-// if ($result->num_rows > 0) {
-//     echo "<table style='border-collapse: collapse; border: 1px solid #ddd;'>";
-//     echo "<tr><th style='border: 1px solid #ddd; padding: 8px;'>Product ID</th></tr>";
-//     while($row = $result->fetch_assoc()) {
-//         echo "<tr><td style='border: 1px solid #ddd; padding: 8px;'>".$row["productID"]."</td></tr>";
-//     }
-//     echo "</table>";
-// } else {
-//     echo "No results found";
-// }
-?>
 <br/>
 </section>
 

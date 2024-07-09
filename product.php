@@ -3,7 +3,7 @@
 $servername = "127.0.0.1";
 $username = "user1";
 $password = "password";
-$hmdatabase = "sampledatabase";
+$dbname = "hmdatabase";
 if (isset($_GET['data'])) {
     if ($_GET['data'] === 'sample'){
         $dbname = "sampledatabase";

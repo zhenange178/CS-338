@@ -87,10 +87,10 @@ class ViewDB {
                     echo "<td>{$cellValue}</td>";
                 }
                 if ($isSample) {
-                    echo "<td><a href = '..?product.php?id={productID}&data=sample'>Details</a></td>";
+                    echo "<td><a href = '../product.php?id={productID}&data=sample'>Details</a></td>";
                 }
                else {
-                   echo "<td><a href='..?product.php?id={productID}'>Details</a></td>";
+                   echo "<td><a href='../product.php?id={productID}'>Details</a></td>";
                 }
                 echo "</tr>";
             }

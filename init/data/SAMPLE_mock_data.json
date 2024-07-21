@@ -235,7 +235,7 @@
             ],
             "returned": {
                 "returnDateTime": "2024-03-28 06:47:58",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -352,7 +352,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-05-08 18:44:15",
-                "returnReason": "Item not as described"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -505,7 +505,7 @@
             ],
             "returned": {
                 "returnDateTime": "2024-01-28 05:23:38",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -658,7 +658,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-03-04 02:08:01",
-                "returnReason": "Item not as described"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -755,7 +755,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-01-04 16:58:12",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -792,7 +792,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-06-06 09:02:15",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -889,7 +889,7 @@
             ],
             "returned": {
                 "returnDateTime": "2024-03-31 05:37:35",
-                "returnReason": "Item not as described"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -1034,7 +1034,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-10-23 15:42:18",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {

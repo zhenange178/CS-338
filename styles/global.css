@@ -109,3 +109,12 @@ body {
 .buttonOrange:hover{
   background-color: #FF6600;
 }
+
+.buttonGreen {
+  border: 2px solid #008C8C; 
+  color: #008C8C;
+}
+
+.buttonGreen:hover {
+  background-color: #008C8C; 
+}

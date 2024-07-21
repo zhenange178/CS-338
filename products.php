@@ -32,7 +32,10 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
 
 <div>
     <h3>View Tables</h3>
-    View all tables <a href="viewDB_production.php">here</a>.<br />
+    <?php
+    $dbLink = 'viewDB_' . $dbType . '.php';
+    echo "View all " . $dbType . " tables <a href={$dbLink}>here</a>.<br />";
+    ?>
 </div>
 
 <div>

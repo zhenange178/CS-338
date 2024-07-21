@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Define credentials
     $credentials = [
-        'admin' => '12345678',
+        'admin' => 'Mima1dao8',
         '100000' => '12345678'
     ];
 

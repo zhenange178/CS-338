@@ -156,6 +156,12 @@ if (isset($_GET['id'])) {
 </div>
 
 <h2>Reviews (<?php echo (count($reviews) + count($myReviews))?>)</h2>
+<?php
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+    if ($_SESSION['role'] == 'user'){
+?>
 <form method="post">
     <label>Leave a review:
         <select name="stars">
@@ -168,18 +174,11 @@ if (isset($_GET['id'])) {
         </select>
     </label><br/>
     <textarea name="comment" placeholder="Leave a comment..." style="width: 100%;"></textarea><br/>
-    <!-- <textarea name="comment" placeholder="Leave a comment..." style="width: 100%;
-            font-size:16px;
-            height: auto; 
-            min-height: 5em; 
-            box-sizing: border-box; 
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            overflow-wrap: break-word;
-            word-wrap: break-word;"></textarea> -->
     <button type="submit" name="submit_review">Submit</button>
 </form>
+<?php 
+    }
+?>
 
 <?php
 // submit review

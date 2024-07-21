@@ -1,9 +1,26 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['role'])) {
+    header("Location: /");
+    exit();
+}
+?>
+
 <?php include 'includes/header.php'; ?>
 <?php
 $servername = "127.0.0.1";
 $username = "user1";
 $password = "password";
-$dbname = "sampledatabase";
+$dbname = "hmdatabase";
+$dbType = "production";
+if (isset($_GET['data'])) {
+    if ($_GET['data'] === 'sample'){
+        $dbname = "sampledatabase";
+        $dbType = "sample";
+    }
+}
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -21,12 +38,24 @@ $customer = $result->fetch_assoc();
 ?>
 
 <h1>My Account</h1>
-<p>View information and orders.</p>
+
+You are now using the <b><?php echo $dbType; ?></b> database. Choose an option below: <br/><br/>
+<a href="me.php" class="initbutton buttonBlue">Production Data</a>
+<a href="me.php?data=sample" class="initbutton buttonOrange">Sample Data</a>
+<br/><br/>
+
 <h2>User Information</h2>
 
 <form method="post">
     <input type="hidden" name="customerID" value="<?php echo $customer['customerID']; ?>">
-    ID: 100000<br/>
+    <?php
+        if ($_SESSION['role'] == 'admin'){
+            echo 'ID: 999999 (admin)';
+        } else {
+            echo 'ID: 100000';
+        }
+    ?>
+    <br/>
     
     <label for="fname">First Name:</label><br/>
     <input type="text" id="fname" name="fname" size="50" value="<?php echo $customer['firstName']; ?>"><br>
@@ -78,8 +107,8 @@ if (isset($_POST['save'])) {
 
 $conn->close();
 ?>
-
-<h2>Order History</h2>
-
+<br/><br/><br/>
+<a href="logout.php" class="initbutton buttonRed"><b>Logout</b></a>
+<br/><br/>
 
 <?php include 'includes/footer.php'; ?>

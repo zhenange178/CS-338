@@ -107,6 +107,10 @@ class DatabasePopulator {
         if (!$realUserStmt->execute()) {
             echo "Error importing customer 0<br/>";
         }
+        $realAdminStmt = $mysqli->prepare("INSERT IGNORE INTO customers (customerID) VALUES (999999)");
+        if (!$realAdminStmt->execute()) {
+            echo "Error importing admin 0<br/>";
+        }
 
         $stmt = $mysqli->prepare("INSERT IGNORE INTO customers (customerID, customerBirth, customerPhone, customerAddress, customerEmail, firstName, lastName) VALUES (?, ?, ?, ?, ?, ?, ?)");
         

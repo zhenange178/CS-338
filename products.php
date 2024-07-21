@@ -7,6 +7,13 @@ $servername = "127.0.0.1";
 $username = "user1";
 $password = "password";
 $dbname = "hmdatabase";
+$dbType = "production";
+if (isset($_GET['data'])) {
+    if ($_GET['data'] === 'sample'){
+        $dbname = "sampledatabase";
+        $dbType = "sample";
+    }
+}
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -16,12 +23,12 @@ if ($conn->connect_error) {
 }
 ?>
 
-<h1>Features — Production Database</h1>
+<h1>Product Features</h1>
 
-<div>
-    <h3>Sample Data</h3>
-    View features on sample data <a href="features_sample.php">here</a>.<br />
-</div>
+You are now using the <b><?php echo $dbType; ?></b> database. Choose an option below: <br/><br/>
+<a href="products.php" class="initbutton buttonBlue">Production Data</a>
+<a href="products.php?data=sample" class="initbutton buttonOrange">Sample Data</a>
+<br/><br/>
 
 <div>
     <h3>View Tables</h3>

@@ -7,6 +7,13 @@ $servername = "127.0.0.1";
 $username = "user1";
 $password = "password";
 $dbname = "hmdatabase";
+$dbType = "production";
+if (isset($_GET['data'])) {
+    if ($_GET['data'] === 'sample'){
+        $dbname = "sampledatabase";
+        $dbType = "sample";
+    }
+}
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -16,7 +23,14 @@ if ($conn->connect_error) {
 }
 ?>
 
-<h1>Admin Center — Production</h1>
+<h1>Admin Center</h1>
+
+You are now using the <b><?php echo $dbType; ?></b> database. Choose an option below: <br/><br/>
+<a href="admin_home.php" class="initbutton buttonBlue">Production Data</a>
+<a href="admin_home.php?data=sample" class="initbutton buttonOrange">Sample Data</a>
+<br/><br/>
+
+
 <div style="border: 1px solid black; padding: 5px; width: 50%;">
 <b>Contents</b>
 <ul>
@@ -26,8 +40,6 @@ if ($conn->connect_error) {
     <li><a href="#bestcustomer">Most Popular Customer</a></li>
 </ul>
 </div>
-<h2>Sample Database Admin</h2>
-For sample database admin center, click <a href="admin_home_sample.php">here</a>.<br/>
 
 <section id="promocode">
 <div>
@@ -149,7 +161,6 @@ if ($result->num_rows > 0) {
     $result->close();
 
     // Display histogram
-    echo "<h2>Member Rank Histogram</h2>";
     echo "Check the most popular membership ranks.";
     echo "<ul>";
     foreach ($data as $rank => $count) {

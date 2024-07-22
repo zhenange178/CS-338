@@ -199,7 +199,11 @@ if (isset($_POST['submit_review'])) {
         if (!$stmt->execute()) {
             echo "Error adding review: " . $stmt->error . "<br/>";
         } else {
-            header("Location: product.php?id=" . $productId);
+            if ($dbname == 'hmdatabase'){
+                header("Location: product.php?id=" . $productId);
+            } else {
+                header("Location: product.php?id=" . $productId . "&data=sample");
+            }
             exit();
         }
     } else {
@@ -220,7 +224,11 @@ foreach ($myReviews as $review) {
     for ($blankStar = $stars + 1; $blankStar <= 5; $blankStar++){
         echo "☆";
     }
-    echo " <a href='../review.php?id={$review["reviewID"]}'>edit</a>";
+    if ($dbname == 'hmdatabase'){
+        echo " <a href='../review.php?id={$review["reviewID"]}'>edit</a>";
+    } else {
+        echo " <a href='../review.php?id={$review["reviewID"]}&data=sample'>edit</a>";
+    }
     if ($review['comment']){
         echo "<br/>";
     }

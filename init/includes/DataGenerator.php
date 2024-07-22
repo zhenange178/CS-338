@@ -88,15 +88,27 @@ class DataGenerator {
 
     /**
      * randomReason
+     * Same values are used multiple times to simulate a distribution
      * 
      * @return string a random return reason out of predefined values
      */
     public function randomReason() {
         $reasons = [
             'Defective item',
+            'Defective item',
             'Wrong item shipped',
             'Item not as described',
+            'Item not as described',
+            'Item not as described',
             'Changed mind',
+            'Changed mind',
+            'Changed mind',
+            'Changed mind',
+            'Changed mind',
+            'Changed mind',
+            'Found a better price',
+            'Found a better price',
+            'Found a better price',
             'Found a better price',
         ];
         return $reasons[array_rand($reasons)];

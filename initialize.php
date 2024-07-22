@@ -40,7 +40,8 @@
 <div class="divider"></div>
 <div>
     <h3>Production: Reset Database</h3>
-    Select this option if changes were made to the JSON file and you would like to reflect them in the database, and/or you would like to reset all changes made to the database using any application features.<br/>Use the existing product data and mock data files to reset the production database. Data are stored in <code>init/data/hm_product_list.json</code> and <code>init/data/mock_data_list.json</code>. Make sure both files exist and contain data.<br/>All JSON data files will remain unchanged. All other changes to the database will be reset.
+    Select this option if changes were made to the JSON file and you would like to reflect them in the database, and/or you would like to reset all changes made to the database using any application features. Uses the existing product data and mock data files to reset the production database.<br/>
+    Data are stored in <code>init/data/hm_product_list.json</code> and <code>init/data/mock_data_list.json</code>. Make sure both files exist and contain data.<br/>All JSON data files will remain unchanged. All other changes to the database will be reset.
     <br/><br/>
     <?php
     echo "Product list JSON: ";

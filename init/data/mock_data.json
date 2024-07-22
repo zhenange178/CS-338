@@ -1654,7 +1654,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-11-29 18:10:15",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -1905,7 +1905,7 @@
             ],
             "returned": {
                 "returnDateTime": "2024-05-09 00:15:39",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -2227,7 +2227,7 @@
             "PromoCode": "EALa8",
             "returned": {
                 "returnDateTime": "2023-06-08 23:43:48",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -2256,7 +2256,7 @@
             "PromoCode": "TdELr",
             "returned": {
                 "returnDateTime": "2023-12-19 01:40:50",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -2342,7 +2342,7 @@
             "PromoCode": "SDolh",
             "returned": {
                 "returnDateTime": "2024-01-25 16:32:36",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -2819,7 +2819,7 @@
             "PromoCode": "WiSGz",
             "returned": {
                 "returnDateTime": "2023-10-11 17:24:04",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -2933,7 +2933,7 @@
             "PromoCode": "pVUsV",
             "returned": {
                 "returnDateTime": "2023-01-03 11:40:54",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -3213,7 +3213,7 @@
             "PromoCode": "WiSGz",
             "returned": {
                 "returnDateTime": "2023-08-17 22:03:09",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -3238,7 +3238,7 @@
             "PromoCode": "SDolh",
             "returned": {
                 "returnDateTime": "2023-06-19 12:33:29",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -3592,7 +3592,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-04-30 11:49:37",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -3648,7 +3648,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-01-25 03:22:30",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -3896,7 +3896,7 @@
             ],
             "returned": {
                 "returnDateTime": "2024-02-23 23:50:00",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -4326,7 +4326,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-09-24 11:32:04",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -4828,7 +4828,7 @@
             "PromoCode": "EceMF",
             "returned": {
                 "returnDateTime": "2023-10-17 09:52:44",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -4881,7 +4881,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-08-06 12:10:39",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -5296,7 +5296,7 @@
             ],
             "returned": {
                 "returnDateTime": "2024-04-30 21:26:26",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -5397,7 +5397,7 @@
             ],
             "returned": {
                 "returnDateTime": "2024-03-17 02:38:19",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -5575,7 +5575,7 @@
             "PromoCode": "al2Rs",
             "returned": {
                 "returnDateTime": "2023-12-22 19:50:38",
-                "returnReason": "Wrong item shipped"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -6308,7 +6308,7 @@
             "PromoCode": "ioTYC",
             "returned": {
                 "returnDateTime": "2023-12-20 16:59:21",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -7065,7 +7065,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-09-21 16:43:35",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -7267,7 +7267,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-02-08 09:20:15",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -7283,7 +7283,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-06-25 06:48:42",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -7397,7 +7397,7 @@
             ],
             "returned": {
                 "returnDateTime": "2024-03-14 06:57:33",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -7523,7 +7523,7 @@
             "PromoCode": "2bYgC",
             "returned": {
                 "returnDateTime": "2023-08-26 06:51:43",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -7692,7 +7692,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-10-28 00:24:10",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -8214,7 +8214,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-10-23 14:45:24",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -8566,7 +8566,7 @@
             "PromoCode": "eXHrX",
             "returned": {
                 "returnDateTime": "2023-12-09 07:49:51",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -8738,7 +8738,7 @@
             "PromoCode": "pVUsV",
             "returned": {
                 "returnDateTime": "2024-03-13 16:32:58",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -9529,7 +9529,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-01-08 15:49:48",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -9668,7 +9668,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-06-05 13:53:36",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -10202,7 +10202,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-05-18 21:09:59",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -10529,7 +10529,7 @@
             "PromoCode": "pByBG",
             "returned": {
                 "returnDateTime": "2023-05-21 04:05:45",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -10812,7 +10812,7 @@
             ],
             "returned": {
                 "returnDateTime": "2023-04-29 00:24:28",
-                "returnReason": "Defective item"
+                "returnReason": "Changed mind"
             }
         },
         {
@@ -11275,7 +11275,7 @@
             "ReviewID": 400055,
             "CustomerID": 100029,
             "ProductID": "0735094002",
-            "Comment": "Defective item",
+            "Comment": "Changed mind",
             "Rating": 1
         },
         {

@@ -46,8 +46,8 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
 <ul>
     <li><a href="#promocode">Top 10 Promo Codes</a></li>
     <li><a href="#outofstock">Out of Stock Items</a></li>
-    <li><a href="#memberranks">Membership Distribution</a></li>
     <li><a href="#bestcustomer">Most Popular Customer</a></li>
+    <li><a href="#histograms">Other Analytics</a></li>
 </ul>
 </div>
 
@@ -148,47 +148,6 @@ if ($result->num_rows > 0) {
 <br/>
 </section>
 
-<section id="memberranks">
-<h2>Member Rank Distribution</h2>
-<?php
-$sql = "SELECT memberRank, COUNT(*) as count FROM memberships GROUP BY memberRank";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    // Data array to store results
-    $data = array();
-
-    // Fetch data from each row
-    while($row = $result->fetch_assoc()) {
-        $memberRank = $row["memberRank"];
-        $count = $row["count"];
-
-        // Store in data array
-        $data[$memberRank] = $count;
-    }
-
-    // Close result set
-    $result->close();
-
-    // Display histogram
-    echo "Check the most popular membership ranks.";
-    echo "<ul>";
-    foreach ($data as $rank => $count) {
-        echo "<li>$rank: ";
-        for ($i = 0; $i < $count; $i++) {
-            echo "■"; // Display a block for each count
-        }
-        echo "</li>";
-    }
-    echo "</ul>";
-} else {
-    echo "No results found";
-}
-?>
-
-<br/>
-</section>
-
 <section id="bestcustomer">
 <h2>Most Popular Customer</h2>
 <?php
@@ -204,6 +163,112 @@ if ($result->num_rows > 0) {
     echo "No results found";
 }
 ?>
+</section>
+
+<section id="histograms">
+<?php
+// Fetch membership ranks and count them
+$sql = "SELECT memberRank, COUNT(*) as count FROM memberships GROUP BY memberRank ORDER BY count DESC";
+$result = $conn->query($sql);
+
+$memberRanks = [];
+$memberCounts = [];
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $memberRanks[] = $row['memberRank'];
+        $memberCounts[] = $row['count'];
+    }
+}
+
+// Fetch return reasons and count them
+$sql = "SELECT returnReason, COUNT(*) as count FROM returnedOrders GROUP BY returnReason ORDER BY count DESC";
+$result = $conn->query($sql);
+
+$returnReasons = [];
+$returnCounts = [];
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $returnReasons[] = $row['returnReason'];
+        $returnCounts[] = $row['count'];
+    }
+}
+
+?>
+<style>
+    canvas {
+        max-width: 600px;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<h2>Member Ranks</h2>
+<div>
+    View the most popular membership ranks.
+</div>
+<canvas id="memberRanksChart"></canvas>
+<script>
+    // Data for member ranks
+    const memberRanks = <?php echo json_encode($memberRanks); ?>;
+    const memberCounts = <?php echo json_encode($memberCounts); ?>;
+
+    const ctx1 = document.getElementById('memberRanksChart').getContext('2d');
+    const memberRanksChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: memberRanks,
+            datasets: [{
+                label: 'Number of Members',
+                data: memberCounts,
+                backgroundColor: '#0052CC',
+                borderColor: '#003399',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<h2>Return Analysis</h2>
+<div>
+    View the most frequent returned order reasons.
+</div>
+<canvas id="returnReasonsChart"></canvas>
+<script>
+    // Data for return reasons
+    const returnReasons = <?php echo json_encode($returnReasons); ?>;
+    const returnCounts = <?php echo json_encode($returnCounts); ?>;
+
+    const ctx2 = document.getElementById('returnReasonsChart').getContext('2d');
+    const returnReasonsChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: returnReasons,
+            datasets: [{
+                label: 'Number of Returns',
+                data: returnCounts,
+                backgroundColor: '#E50010', 
+                borderColor: '#B3000C',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
 </section>
 
 <?php

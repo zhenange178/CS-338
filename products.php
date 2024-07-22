@@ -86,7 +86,11 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
         }
         echo "<big><code>$query</code></big><br/>";
         $tableDisplay = new ViewDB($conn);
-        $tableDisplay->listProducts($query, FALSE);
+        if ($dbType == 'production'){
+            $tableDisplay->listProducts($query, FALSE);
+        } else {
+            $tableDisplay->listProducts($query, TRUE);
+        }
 
     }
     $conn->close();

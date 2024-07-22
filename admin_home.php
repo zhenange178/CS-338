@@ -138,7 +138,11 @@ if ($result->num_rows > 0) {
     echo "<tr><th style='border: 1px solid #ddd; padding: 8px;'>Product ID</th></tr>";
     while($row = $result->fetch_assoc()) {
         $productId = $row["productID"];
-        echo "<tr><td style='border: 1px solid #ddd; padding: 8px;'><a href='product.php?id={$productId}'>{$productId}</a></td></tr>";
+        if ($dbType == 'production'){
+            echo "<tr><td style='border: 1px solid #ddd; padding: 8px;'><a href='product.php?id={$productId}'>{$productId}</a></td></tr>";
+        } else {
+            echo "<tr><td style='border: 1px solid #ddd; padding: 8px;'><a href='product.php?id={$productId}&data=sample'>{$productId}</a></td></tr>";
+        }
     }
     echo "</table>";
 } else {

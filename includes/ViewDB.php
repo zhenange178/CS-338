@@ -59,10 +59,7 @@ class ViewDB {
         }
     }
 
-    public function listProducts($sql, $isSample) {
-        echo $this->getStyles($sql);
-    
-        $result = $this->conn->query($sql);
+    public function listProducts($result, $isSample) {
         $selectedColumns = ['productID', 'productName', 'sellingAttribute', 'stock', 'mainCategory'];
     
         if ($result->num_rows > 0) {

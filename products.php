@@ -136,43 +136,58 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
         ";
 
         $query1 = "LEFT JOIN productCategories pc ON p.productID = pc.productID ";
-
         $query2 = "WHERE 1=1";
         $query3 = "";
 
+        // Parameters array: The types array signify each type of input type for the later prepared statement to prevent sql injection
+        $params = [];
+        $types = '';
+
         // Add conditions based on input
         if (!empty($name)) {
-            $query2 .= " AND p.productName LIKE '%" . mysqli_real_escape_string($conn, $name) . "%'";
+            $query2 .= " AND p.productName LIKE ?";
+            $params[] = '%' . $name . '%';
+            $types .= 's';
         }
         if (!empty($id)) {
-            $query2 .= " AND p.productID LIKE '%" . mysqli_real_escape_string($conn, $id) . "%'";
+            $query2 .= " AND p.productID LIKE ?";
+            $params[] = '%' . $id . '%';
+            $types .= 's';
         }
         if ($attribute != 'all_attribute') {
-            $query2 .= " AND p.sellingAttribute = '" . mysqli_real_escape_string($conn, $attribute) . "'";
+            $query2 .= " AND p.sellingAttribute = ?";
+            $params[] = $attribute;
+            $types .= 's';
         }
         if ($availability != 'all_availability') {
-            $query2 .= " AND p.stock = '" . mysqli_real_escape_string($conn, $availability) . "'";
+            $query2 .= " AND p.stock = ?";
+            $params[] = $availability;
+            $types .= 's';
         }
         if ($mainCategory != 'all_mainCategory') {
-            $query2 .= " AND pc.category = '" . mysqli_real_escape_string($conn, $mainCategory) . "' AND pc.categoryType = 0";
+            $query2 .= " AND pc.category = ? AND pc.categoryType = 0";
+            $params[] = $mainCategory;
+            $types .= 's';
         }
         if (!empty($subcategories)) {
             $subcategoriesArray = array_map('trim', explode(',', $subcategories));
-            $subcategoriesList = "'" . implode("','", array_map(function($sub) use ($conn) {
-                return mysqli_real_escape_string($conn, $sub);
-            }, $subcategoriesArray)) . "'";
+            $placeholders = implode(',', array_fill(0, count($subcategoriesArray), '?'));
             $query3 = " AND p.productID IN (
                 SELECT productID 
                 FROM productCategories 
-                WHERE category IN ($subcategoriesList) AND categoryType > 0
+                WHERE category IN ($placeholders) AND categoryType > 0
             )";
+            foreach ($subcategoriesArray as $subcategory) {
+                $params[] = $subcategory;
+                $types .= 's';
+            }
         }
 
         $query4 = " GROUP BY p.productID, p.productName, p.sellingAttribute, p.stock";
 
-        // Display individual sections on each line, combine for execution
+        // Combine queries
         $query = $query0 . $query1 . $query2;
-        if ($query3 != ""){
+        if ($query3 != "") {
             $query .= $query3;
             $query .= $query4;
             echo "<big><code>$query0<br/>$query1<br/>$query2<br/>$query3<br/>$query4;</code></big><br/><br/>";
@@ -181,12 +196,22 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
             echo "<big><code>$query0<br/>$query1<br/>$query2<br/>$query4;</code></big><br/><br/>";
         }
 
+        // Prepare statement to prevent sql injection
+        $stmt = $conn->prepare($query);
+        if ($types) {
+            $stmt->bind_param($types, ...$params);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+
         $tableDisplay = new ViewDB($conn);
         if ($dbType == 'production'){
-            $tableDisplay->listProducts($query, FALSE);
+            $tableDisplay->listProducts($result, FALSE);
         } else {
-            $tableDisplay->listProducts($query, TRUE);
+            $tableDisplay->listProducts($result, TRUE);
         }
+
+        $stmt->close();
     }
     $conn->close();
 
@@ -199,7 +224,7 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
             return $orderTotal < $restrictionAmount;
         }
     }
-    ?>
+?>
 </div>
 
 <?php include 'includes/footer.php'; ?>

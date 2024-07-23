@@ -143,7 +143,7 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
         $params = [];
         $types = '';
 
-        // Add conditions based on input
+        // Add conditions based on input to build query
         if (!empty($name)) {
             $query2 .= " AND p.productName LIKE ?";
             $params[] = '%' . $name . '%';
@@ -185,7 +185,7 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
 
         $query4 = " GROUP BY p.productID, p.productName, p.sellingAttribute, p.stock";
 
-        // Combine queries
+        // Combine queries, display individual sections on front end
         $query = $query0 . $query1 . $query2;
         if ($query3 != "") {
             $query .= $query3;
@@ -196,14 +196,17 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
             echo "<big><code>$query0<br/>$query1<br/>$query2<br/>$query4;</code></big><br/><br/>";
         }
 
-        // Prepare statement to prevent sql injection
+        // Prepare statement, bind input parameters to specified input type to prevent injection
         $stmt = $conn->prepare($query);
         if ($types) {
             $stmt->bind_param($types, ...$params);
         }
+        
+        // Execute the statement
         $stmt->execute();
         $result = $stmt->get_result();
 
+        // Display the table of products.         
         $tableDisplay = new ViewDB($conn);
         if ($dbType == 'production'){
             $tableDisplay->listProducts($result, FALSE);

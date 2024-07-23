@@ -141,12 +141,15 @@ class DatabasePopulator {
     }
 
     public function importMemberships($mysqli, $membershipsData) {
+        // Prepare SQL query with dynamic values
         $stmt = $mysqli->prepare("INSERT IGNORE INTO memberships (membershipID, customerID, membershipPrice, memberRank, expirationDate) VALUES (?, ?, ?, ?, ?)");
         
+        // Check if error
         if ($stmt === false) {
             die('MySQL prepare error: ' . $mysqli->error);
         }
 
+        // Bind all memberhip attributes to the query. All input types much match the specified types (i.e. 'i' is integer, 's' is string). This will validate input data and prevent injection
         foreach ($membershipsData['memberships'] as $membership) {
             $stmt->bind_param("iidis",
                 $membership['MemberID'],
@@ -156,11 +159,10 @@ class DatabasePopulator {
                 $membership['Expiration']
             );
 
+            // Execute indivudual prepared queries. Display error if needed
             if (!$stmt->execute()) {
                 echo "Error importing membership with ID {$membership['MemberID']}: " . $stmt->error . "<br/>";
-            } else {
-                // echo "Membership with ID {$membership['MemberID']} imported successfully.<br/>";
-            }
+            } 
         }
 
         //echo "Memberships imported successfully.<br/>";

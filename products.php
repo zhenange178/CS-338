@@ -30,16 +30,58 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
 <a href="products.php?data=sample" class="initbutton buttonOrange">Sample Data</a>
 <br/><br/>
 
+<style>
+    h2 {
+        text-align: center;
+        color: #343a40;
+    }
+    form {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    label {
+        flex: 1 1 45%;
+        margin-bottom: 20px;
+    }
+    input[type="text"],
+    input[type="number"],
+    select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+    button {
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 16px;
+        flex: 1 1 100%;
+        max-width: 200px;
+        margin: 20px auto 0;
+        display: block;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    .result {
+        margin-top: 30px;
+    }
+    table {
+        border-collapse: collapse;
+        margin: 0 auto; 
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+        width: 100%;
+    }
+</style>
 <div>
-    <h3>View Tables</h3>
-    <?php
-    $dbLink = 'viewDB_' . $dbType . '.php';
-    echo "View all " . $dbType . " tables <a href={$dbLink}>here</a>.<br />";
-    ?>
-</div>
-
-<div>
-    <h3>Search Products</h3>
+    <h2>Search Products</h2>
     <form method="post">
         <label>Product Name: <input type="text" name="name"></label><br>
         <label>Product ID: <input type="number" name="id"></label><br>
@@ -56,46 +98,91 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
                 <option value="NotAvailable">Out of stock</option>
             </select>
         </label><br>
+        <label>Main Category:
+            <select name="mainCategory">
+                <option value="all_mainCategory">All</option>
+                <option value="ladies">Ladies</option>
+                <option value="men">Men</option>
+                <option value="kids">Kids</option>
+                <option value="home">Home</option>
+                <option value="sportswear">Sportswear</option>
+            </select>
+        </label><br>
+        <label>Subcategories (comma separated): <input type="text" name="subcategories"></label><br>
         <button type="submit" name="submit_search">Search</button>
     </form><br/>
 
     <?php
-    //search form
+    // Search form
     if (isset($_POST['submit_search'])) {
         // Retrieve form data
         $name = $_POST['name'] ?? '';
         $id = $_POST['id'] ?? '';
         $attribute = $_POST['attribute'] ?? 'all_attribute';
         $availability = $_POST['availability'] ?? 'all_availability';
+        $mainCategory = $_POST['mainCategory'] ?? 'all_mainCategory';
+        $subcategories = $_POST['subcategories'] ?? '';
 
-        // Construct SQL query
-        $query = "SELECT * FROM products WHERE 1=1";
-        
+        // SQL: constructing query to search
+        $query0 = "
+            SELECT 
+                p.productID, 
+                p.productName, 
+                p.sellingAttribute, 
+                p.stock,
+                MAX(CASE WHEN pc.categoryType = 0 THEN pc.category ELSE NULL END) AS mainCategory
+            FROM 
+                products p 
+        ";
+
+        $query1 = "LEFT JOIN productCategories pc ON p.productID = pc.productID ";
+
+        $query2 = "WHERE 1=1";
+
         // Add conditions based on input
         if (!empty($name)) {
-            $query .= " AND productName LIKE '%" . mysqli_real_escape_string($conn, $name) . "%'";
+            $query2 .= " AND p.productName LIKE '%" . mysqli_real_escape_string($conn, $name) . "%'";
         }
         if (!empty($id)) {
-            $query .= " AND productID LIKE '%" . mysqli_real_escape_string($conn, $id) . "%'";
+            $query2 .= " AND p.productID LIKE '%" . mysqli_real_escape_string($conn, $id) . "%'";
         }
         if ($attribute != 'all_attribute') {
-            $query .= " AND sellingAttribute = '" . mysqli_real_escape_string($conn, $attribute) . "'";
+            $query2 .= " AND p.sellingAttribute = '" . mysqli_real_escape_string($conn, $attribute) . "'";
         }
         if ($availability != 'all_availability') {
-            $query .= " AND stock = '" . mysqli_real_escape_string($conn, $availability) . "'";
+            $query2 .= " AND p.stock = '" . mysqli_real_escape_string($conn, $availability) . "'";
         }
-        echo "<big><code>$query</code></big><br/>";
+        if ($mainCategory != 'all_mainCategory') {
+            $query2 .= " AND pc.category = '" . mysqli_real_escape_string($conn, $mainCategory) . "' AND pc.categoryType = 0";
+        }
+        if (!empty($subcategories)) {
+            $subcategoriesArray = array_map('trim', explode(',', $subcategories));
+            $subcategoriesList = "'" . implode("','", array_map(function($sub) use ($conn) {
+                return mysqli_real_escape_string($conn, $sub);
+            }, $subcategoriesArray)) . "'";
+            $query3 = " AND p.productID IN (
+                SELECT productID 
+                FROM productCategories 
+                WHERE category IN ($subcategoriesList) AND categoryType > 0
+            )";
+        }
+
+        $query4 = " GROUP BY p.productID, p.productName, p.sellingAttribute, p.stock";
+
+        $query = $query0 . $query1 . $query2 . $query3 . $query4;
+
+        echo "<big><code>$query0<br/>$query1<br/>$query2<br/>$query3<br/>$query4;</code></big><br/><br/>";
+
         $tableDisplay = new ViewDB($conn);
         if ($dbType == 'production'){
             $tableDisplay->listProducts($query, FALSE);
         } else {
             $tableDisplay->listProducts($query, TRUE);
         }
-
     }
     $conn->close();
 
-    // For later use: promocode validator
+    // For later use: promo code validator
     function isPromoCodeValid($discountType, $restrictionAmount, $orderTotal){
         if ($discountType === 'amount_off'){
             return $orderTotal > $restrictionAmount;
@@ -104,7 +191,6 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
             return $orderTotal < $restrictionAmount;
         }
     }
-    
     ?>
 </div>
 

@@ -22,6 +22,12 @@ $role = $_SESSION['role'];
 
         <h2>Features</h2>
         Once initialized, check out the site's features via the header bar.<br />
+
+        <h2>View All Tables</h2>
+        View all database tables.<br /><br />
+        <a href="viewDB_production.php" class="initbutton buttonBlue">Production Database</a>
+        <a href="viewDB_sample.php" class="initbutton buttonOrange">Sample Database</a>
+        <br/><br/>
     </div>
 
 <?php include 'includes/footer.php'; ?>

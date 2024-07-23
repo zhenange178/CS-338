@@ -23,6 +23,8 @@ if ($conn->connect_error) {
 
 $allTables = ['products', 'productCategories', 'productColors', 'productPrices', 'customers', 'memberships', 'orders', 'returnedOrders', 'orderDetails', 'reviews', 'promoCodes'];
 
+echo "<h1>Production Database</h1>";
+
 foreach ($allTables as $table){
     echo"<br/>" . $table . "<br/>";
     showTable($conn, $table);

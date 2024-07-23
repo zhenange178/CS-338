@@ -138,6 +138,7 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
         $query1 = "LEFT JOIN productCategories pc ON p.productID = pc.productID ";
 
         $query2 = "WHERE 1=1";
+        $query3 = "";
 
         // Add conditions based on input
         if (!empty($name)) {
@@ -169,9 +170,16 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
 
         $query4 = " GROUP BY p.productID, p.productName, p.sellingAttribute, p.stock";
 
-        $query = $query0 . $query1 . $query2 . $query3 . $query4;
-
-        echo "<big><code>$query0<br/>$query1<br/>$query2<br/>$query3<br/>$query4;</code></big><br/><br/>";
+        // Display individual sections on each line, combine for execution
+        $query = $query0 . $query1 . $query2;
+        if ($query3 != ""){
+            $query .= $query3;
+            $query .= $query4;
+            echo "<big><code>$query0<br/>$query1<br/>$query2<br/>$query3<br/>$query4;</code></big><br/><br/>";
+        } else {
+            $query .= $query4;
+            echo "<big><code>$query0<br/>$query1<br/>$query2<br/>$query4;</code></big><br/><br/>";
+        }
 
         $tableDisplay = new ViewDB($conn);
         if ($dbType == 'production'){

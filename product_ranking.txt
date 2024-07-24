@@ -64,7 +64,7 @@ GROUP BY p.productID;
 -- Compute weighted score S for all products (and rank them)
 DROP TABLE IF EXISTS #defaultrank;
 SELECT p.productID,
-       CAST((0.5 * s.normNumSold + 0.3 * r.normAveRating + 0.2 * ret.normReturnRate) AS DECIMAL(10,5)) AS Score
+       CAST((0.5 * s.normNumSold + 0.3 * r.normAveRating + 0.2 * (1-ret.normReturnRate)) AS DECIMAL(10,5)) AS Score
 INTO #defaultrank
 FROM products p
 LEFT JOIN #sales s ON s.productID = p.productID
@@ -100,8 +100,8 @@ SELECT c.customerID,
                         AND (cat3.category = cat2.category OR cat3.categorytype = cat2.categorytype)
                   )
             )
-            THEN CAST((0.4 * s.normNumSold + 0.3 * r.normAveRating + 0.2 * ret.normReturnRate + 0.1) AS DECIMAL(10,5)) -- Adjusted score if match found
-            ELSE CAST((0.5 * s.normNumSold + 0.3 * r.normAveRating + 0.2 * ret.normReturnRate) AS DECIMAL(10,5)) -- Default score
+            THEN CAST((0.4 * s.normNumSold + 0.3 * r.normAveRating + 0.2 * (1-ret.normReturnRate) + 0.1) AS DECIMAL(10,5)) -- Adjusted score if match found
+            ELSE CAST((0.5 * s.normNumSold + 0.3 * r.normAveRating + 0.2 * (1-ret.normReturnRate)) AS DECIMAL(10,5)) -- Default score
        END AS CustomerScore
 INTO #purchase
 FROM products p 

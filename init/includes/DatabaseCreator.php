@@ -168,7 +168,7 @@ class DatabaseCreator{
 
         // Create orders Table
         $sql = "CREATE TABLE IF NOT EXISTS orders (
-            orderID INT PRIMARY KEY,
+            orderID INT AUTO_INCREMENT PRIMARY KEY,
             customerID INT,
             trackingID INT NOT NULL,
             orderDateTime DATETIME NOT NULL,
@@ -223,7 +223,7 @@ class DatabaseCreator{
                 ON UPDATE CASCADE,
             CONSTRAINT fk_product_detail
                 FOREIGN KEY (productID) 
-                REFERENCES products(productID)
+                REFERENCES productColors(articleID)
                 ON DELETE SET NULL
                 ON UPDATE CASCADE
         )";

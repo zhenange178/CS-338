@@ -19,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Check credentials
     if (isset($credentials[$username]) && $credentials[$username] == $password) {
         $_SESSION['userID'] = $username == 'admin' ? 999999 : $username;
-        header("Location: /");
+        echo "Login successful: userID set to " . $_SESSION['userID']; // Debug statement
+        header("Location: index.php");
         exit();
     } else {
         $login_error = 'Invalid username or password';

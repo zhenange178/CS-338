@@ -2,11 +2,10 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['userID'])) {
-    header("Location: /");
-    exit();
+$userID = 0;
+if (isset($_SESSION['userID'])) {
+    $userID = $_SESSION['userID'];
 }
-$userID = $_SESSION['userID'];
 ?>
 
 
@@ -31,6 +30,10 @@ $userID = $_SESSION['userID'];
                 if ($userID == 999999) {
             ?>
             <li style="float:right"><a href="/admin_home.php">Admin Home</a></li>
+            <?php
+                } else {
+            ?>
+            <li style="float:right"><a href="/cart.php">My Cart</a></li>
             <?php
                 }
             ?>

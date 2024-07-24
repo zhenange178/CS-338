@@ -1,12 +1,25 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['userID'])) {
+    header("Location: /");
+    exit();
+}
+$userID = $_SESSION['userID'];
+?>
+
 <?php include 'includes/header.php'; ?>
 <?php
 $servername = "127.0.0.1";
 $username = "user1";
 $password = "password";
 $dbname = "hmdatabase";
+$dbType = "production";
 if (isset($_GET['data'])) {
     if ($_GET['data'] === 'sample'){
         $dbname = "sampledatabase";
+        $dbType = "sample";
     }
 }
 
@@ -18,7 +31,8 @@ if ($conn->connect_error) {
 
 if (isset($_GET['id'])) {
     $productId = $_GET['id'];
-    $customerID = 100000; // hardcoded
+    $colorId = isset($_GET['color']) ? intval($_GET['color']) : 0;
+    $customerID = $userID;
 
     $product = null;
     $categories = [];
@@ -26,6 +40,7 @@ if (isset($_GET['id'])) {
     $prices = [];
     $reviews = [];
     $myReviews = [];
+    $colorName = '';
 
     // SQL: get product table
     $sqlProduct = "SELECT * FROM products WHERE productID = '$productId'";
@@ -96,11 +111,31 @@ if (isset($_GET['id'])) {
 <?php if ($product): ?>
 <div class="container" style="display: flex;">
     <div style="flex: 1;">
-        <img src="<?php echo $product['productImage']; ?>" alt="Product Image" style="max-width: 100%; height: auto; max-height: 500px; display: block; margin: 0px auto;">
+        <?php
+            if (isset($_GET['color'])) {
+                $articleIDToFind = intval($_GET['color']);
+                $articleImage = '';
+                foreach ($colors as $color) {
+                    if ($color['articleID'] == $articleIDToFind) {
+                        $articleImage = $color['articleImage'];
+                        $colorName = $color['colorName'];
+                        break; 
+                    }
+                }
+        ?>
+            <img src="<?php echo $articleImage; ?>" alt="<?php echo $colorName; ?>" style="max-width: 100%; height: auto; max-height: 500px; display: block; margin: 0px auto;">
+        <?php
+            } else {
+        ?>
+            <img src="<?php echo $product['productImage']; ?>" alt="Product Image" style="max-width: 100%; height: auto; max-height: 500px; display: block; margin: 0px auto;">
+        <?php
+            }
+        ?>
     </div>
     <div style="flex: 1; padding: 10px;">
         <div style="text-align:center; background-color: #f0f0f0; padding: 0 5px 5px;">
-            <h2><?php echo "<h2>{$product['productName']}"; ?></h2>
+            <h2><?php echo "{$product['productName']}"; ?></h2>
+            <h3><?php echo "{$colorName}"; ?></h3>
             <big><?php 
             $whitePrice = null;
             $redPrice = null;
@@ -143,10 +178,17 @@ if (isset($_GET['id'])) {
             <div class="container" style="display: flex; flex-wrap: wrap;">
                 <?php
                 foreach ($colors as $color){
-                    echo '<div >';
+                    echo '<div>';
                     $image = $color['articleImage'];
+                    if ($dbType == "production"){
+                        $link = 'product.php?id=' . $productId . '&color=' . $color['articleID'];
+                    } else {
+                        $link = 'product.php?id=' . $productId . '&color=' . $color['articleID'] . '&data=sample';
+                    }
+                    echo '<a href="' . $link . '">';
                     echo '<img src="' . $color['articleImage'] . '" alt="' . $color['colorName'] . '" style="max-width: 100px; height: auto; max-height: 80px; display: block; margin: 0px auto;">';
-                    echo "</div>";
+                    echo '</a>';
+                    echo '</div>';
                 }
                 ?>
             </div>
@@ -154,13 +196,22 @@ if (isset($_GET['id'])) {
         <!-- Categories, colors, and other information to follow. -->
     </div>
 </div>
+<!-- <div style="margin-left:auto;">
+    <br /><br/>
+<form method="post" action="">
+    <label for="quantity">Quantity:</label>
+    <input type="number" name="quantity" id="quantity" required min="1">
+    <button type="submit">Add to Cart</button>
+</form>
+</div> -->
+
 
 <h2>Reviews (<?php echo (count($reviews) + count($myReviews))?>)</h2>
 <?php
     if (session_status() == PHP_SESSION_NONE) {
         session_start();
     }
-    if ($_SESSION['role'] == 'user'){
+    if ($_SESSION['userID'] <= 100100){
 ?>
 <form method="post">
     <label>Leave a review:
@@ -250,6 +301,42 @@ foreach ($reviews as $review) {
         echo "<br/>";
     }
     echo $review['comment'] . "<br/><br/><br/>";
+}
+
+// Handle form submission to add product to cart
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['quantity'])) {
+    if (!isset($_SESSION['userID'])) {
+        echo "You need to be logged in to add items to the cart.";
+        exit();
+    }
+
+    $userID = $_SESSION['userID'];
+    $quantity = intval($_POST['quantity']);
+
+    if ($colorId) {
+        // Check if color exists
+        $sqlCheckColor = "SELECT productID FROM productColors WHERE articleID = ?";
+        $stmt = $conn->prepare($sqlCheckColor);
+        $stmt->bind_param("i", $colorId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $colorRow = $result->fetch_assoc();
+            $productId = $colorRow['productID'];
+        } else {
+            echo "Invalid color ID.";
+            exit();
+        }
+    }
+
+    // Add to cart
+    $sqlAddToCart = "INSERT INTO cart (customerID, productID, quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
+    $stmt = $conn->prepare($sqlAddToCart);
+    $stmt->bind_param("iii", $userID, $productId, $quantity);
+    $stmt->execute();
+
+    echo "Item added to cart successfully!";
 }
 ?>
 <?php endif; ?>

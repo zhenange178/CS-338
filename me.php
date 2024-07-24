@@ -74,6 +74,81 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
 
     <button type="submit" name="save">Save Changes</button>
 </form>
+<style>
+    table {
+        
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    th {
+        background-color: #f4f4f4;
+    }
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<?php
+// Fetch orders for the logged-in user
+$sqlOrders = "SELECT * FROM orders WHERE customerID = ?";
+$stmt = $conn->prepare($sqlOrders);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$ordersResult = $stmt->get_result();
+
+// Fetch reviews for the logged-in user
+$sqlReviews = "SELECT * FROM reviews WHERE customerID = ?";
+$stmt = $conn->prepare($sqlReviews);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$reviewsResult = $stmt->get_result();
+?>
+<h2>My Orders</h2>
+<table>
+    <tr>
+        <th>Order ID</th>
+        <th>Tracking ID</th>
+        <th>Order Date & Time</th>
+        <th>Promo Code Used</th>
+    </tr>
+
+    <?php while ($row = $ordersResult->fetch_assoc()): ?>
+    <tr>
+        <td><a href="order_details.php?id=<?php echo htmlspecialchars($row['orderID']); ?>"><?php echo htmlspecialchars($row['orderID']); ?></a></td>
+        <td><?php echo htmlspecialchars($row['trackingID']); ?></td>
+        <td><?php echo htmlspecialchars($row['orderDateTime']); ?></td>
+        <td><?php echo $row['promoCodeUsed']; ?></td>
+    </tr>
+    <?php endwhile; ?>
+
+</table>
+
+<h2>My Reviews</h2>
+<table>
+    <tr>
+        <th>Review ID</th>
+        <th>Product ID</th>
+        <th>Rating</th>
+        <th>Comment</th>
+    </tr>
+
+    <?php while ($row = $reviewsResult->fetch_assoc()): ?>
+    <tr>
+        <td><?php echo htmlspecialchars($row['reviewID']); ?></td>
+        <td><a href="product.php?id=<?php echo htmlspecialchars($row['productID']); ?>"><?php echo htmlspecialchars($row['productID']); ?></a></td>
+        <td><?php echo htmlspecialchars($row['rating']); ?></td>
+        <td><?php echo htmlspecialchars($row['comment']); ?></td>
+    </tr>
+    <?php endwhile; ?>
+
+</table>
 
 <?php
 if (isset($_POST['save'])) {

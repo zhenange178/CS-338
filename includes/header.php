@@ -32,6 +32,10 @@ $userID = $_SESSION['userID'];
             ?>
             <li style="float:right"><a href="/admin_home.php">Admin Home</a></li>
             <?php
+                } else {
+            ?>
+            <li style="float:right"><a href="/place_order.php">Place Order</a></li>
+            <?php
                 }
             ?>
         </ul>

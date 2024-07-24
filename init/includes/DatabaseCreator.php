@@ -168,7 +168,7 @@ class DatabaseCreator{
 
         // Create orders Table
         $sql = "CREATE TABLE IF NOT EXISTS orders (
-            orderID INT PRIMARY KEY,
+            orderID INT AUTO_INCREMENT PRIMARY KEY,
             customerID INT,
             trackingID INT NOT NULL,
             orderDateTime DATETIME NOT NULL,

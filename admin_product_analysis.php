@@ -149,7 +149,7 @@ $sqlCreateRanks = "
         p.productID,
         CAST((0.5 * COALESCE(s.normNumSold, 0) + 
             0.3 * COALESCE(r.normAveRating, 0) + 
-            0.2 * COALESCE(ret.normReturnRate, 0)) AS DECIMAL(10,5)) AS Score
+            0.2 * COALESCE(1-ret.normReturnRate, 0)) AS DECIMAL(10,5)) AS Score
     FROM products p
     LEFT JOIN sales s ON s.productID = p.productID
     LEFT JOIN ratings r ON r.productID = p.productID
@@ -199,11 +199,11 @@ $sqlCreatePurchases = "
             )
             THEN CAST((0.4 * COALESCE(s.normNumSold, 0) + 
                     0.3 * COALESCE(r.normAveRating, 0) + 
-                    0.2 * COALESCE(ret.normReturnRate, 0) + 
+                    0.2 * COALESCE(1-ret.normReturnRate, 0) + 
                     0.1) AS DECIMAL(10,5)) -- Adjusted score if match found
             ELSE CAST((0.5 * COALESCE(s.normNumSold, 0) + 
                     0.3 * COALESCE(r.normAveRating, 0) + 
-                    0.2 * COALESCE(ret.normReturnRate, 0)) AS DECIMAL(10,5)) -- Default score
+                    0.2 * COALESCE(1-ret.normReturnRate, 0)) AS DECIMAL(10,5)) -- Default score
         END AS CustomerScore
     FROM products p 
     LEFT JOIN orderDetails od ON od.productID = p.productID

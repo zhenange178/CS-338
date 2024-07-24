@@ -1,3 +1,16 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if user is logged in
+if (!isset($_SESSION['userID']) || $_SESSION['userID'] > 100100) {
+    header("Location: /");
+    exit();
+}
+$userID = $_SESSION['userID'];
+?>
+
 <?php include 'includes/header.php'; ?>
 <?php
 $servername = "127.0.0.1";
@@ -21,7 +34,7 @@ echo "<h1>Edit or Delete a Review</h1>";
 if (isset($_GET['id'])) {
     $reviewId = $_GET['id'];
     $review = null;
-    $customerID = 100000; //hardcode
+    $customerID = $userID;
 
     $sql = "SELECT * FROM reviews WHERE reviewID = '$reviewId'";
     $result = mysqli_query($conn, $sql);    

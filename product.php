@@ -232,23 +232,49 @@ while ($row = $articleIDsResult->fetch_assoc()) {
 }
 
 // Check if the user has purchased any of the articles
-$purchased = false;
-foreach ($articleIDs as $articleID) {
-    $sqlOrderIDs = "
-        SELECT DISTINCT od.orderID
-        FROM orderDetails od
-        JOIN orders o ON od.orderID = o.orderID
-        WHERE od.productID = ? AND o.customerID = ?
-    ";
-    $stmt = $conn->prepare($sqlOrderIDs);
-    $stmt->bind_param("ii", $productId, $userID);
-    $stmt->execute();
-    $orderIDsResult = $stmt->get_result();
+$purchasedArticles = [];
 
-    if ($orderIDsResult->num_rows > 0) {
-        $purchased = true;
-        break; // Exit the loop if any purchase is found
+// Retrieve all orders for the user
+$sqlOrders = "
+    SELECT orderID
+    FROM orders
+    WHERE customerID = ?
+";
+$stmt = $conn->prepare($sqlOrders);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$ordersResult = $stmt->get_result();
+
+// Loop through each order to get productIDs
+while ($orderRow = $ordersResult->fetch_assoc()) {
+    $orderID = $orderRow['orderID'];
+    
+    // Retrieve all productIDs for this order
+    $sqlOrderDetails = "
+        SELECT DISTINCT productID
+        FROM orderDetails
+        WHERE orderID = ?
+    ";
+    $stmt = $conn->prepare($sqlOrderDetails);
+    $stmt->bind_param("i", $orderID);
+    $stmt->execute();
+    $orderDetailsResult = $stmt->get_result();
+
+    // Add each productID to the purchasedArticles array
+    while ($detailRow = $orderDetailsResult->fetch_assoc()) {
+        $purchasedArticles[] = $detailRow['productID'];
     }
+}
+
+// remove duplicates from the array
+$purchasedArticles = array_unique($purchasedArticles);
+
+// Check if any articleID is in the purchasedArticles array
+$purchased = false;
+$commonIDs = array_intersect($articleIDs, $purchasedArticles);
+
+if (!empty($commonIDs)) {
+    $purchased = true;
 }
 ?>
 <?php if ($purchased){

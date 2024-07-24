@@ -68,31 +68,62 @@ if ($order) {
     echo "<p>Order ID: " . htmlspecialchars($order['orderID']) . "</p>";
     echo "<p>Tracking ID: " . htmlspecialchars($order['trackingID']) . "</p>";
     echo "<p>Order Date: " . htmlspecialchars($order['orderDateTime']) . "</p>";
-    echo "<p>Customer ID: " . $customerID . "</p>";
+    echo "<p>Customer ID: " . htmlspecialchars($order['customerID']) . "</p>";
 
+    // Retrieve order details
     $sqlOrderDetails = "
-    SELECT productID, count
-    FROM orderDetails
-    WHERE orderID = ?
-";
-$stmt = $conn->prepare($sqlOrderDetails);
-$stmt->bind_param("i", $orderID);
-$stmt->execute();
-$orderDetailsResult = $stmt->get_result();
+        SELECT od.productID, od.count
+        FROM orderDetails od
+        WHERE od.orderID = ?
+    ";
+    $stmt = $conn->prepare($sqlOrderDetails);
+    $stmt->bind_param("i", $orderID);
+    $stmt->execute();
+    $orderDetailsResult = $stmt->get_result();
 
-echo "<h2>Items Ordered</h2>";
-echo "<table border='1'>";
-echo "<tr><th>Product ID</th><th>Quantity</th></tr>";
+    echo "<h2>Items Ordered</h2>";
+    echo "<table border='1'>";
+    echo "<tr><th>Product Link</th><th>Quantity</th></tr>";
 
-// Fetch and display order details
-while ($row = $orderDetailsResult->fetch_assoc()) {
-    echo "<tr>";
-    echo "<td>" . htmlspecialchars($row['productID']) . "</td>";
-    echo "<td>" . htmlspecialchars($row['count']) . "</td>";
-    echo "</tr>";
-}
+    // Fetch and display order details with clickable product links
+    while ($row = $orderDetailsResult->fetch_assoc()) {
+        $productID = htmlspecialchars($row['productID']);
+        $quantity = htmlspecialchars($row['count']);
 
-echo "</table>";
+        // Check if productID is in the products table
+        $sqlCheckProduct = "SELECT productID FROM products WHERE productID = ?";
+        $stmtCheckProduct = $conn->prepare($sqlCheckProduct);
+        $stmtCheckProduct->bind_param("i", $productID);
+        $stmtCheckProduct->execute();
+        $resultProduct = $stmtCheckProduct->get_result();
+
+        if ($resultProduct->num_rows > 0) {
+            // Product ID exists in products table
+            $link = "product.php?id=$productID";
+        } else {
+            // Product ID does not exist in products table; check in productColors table
+            $sqlCheckColor = "SELECT productID FROM productColors WHERE articleID = ?";
+            $stmtCheckColor = $conn->prepare($sqlCheckColor);
+            $stmtCheckColor->bind_param("i", $productID);
+            $stmtCheckColor->execute();
+            $resultColor = $stmtCheckColor->get_result();
+
+            if ($resultColor->num_rows > 0) {
+                $colorRow = $resultColor->fetch_assoc();
+                $linkedProductID = $colorRow['productID'];
+                $link = "product.php?id=$linkedProductID&color=$productID";
+            } else {
+                $link = "#"; // Default link if neither condition is met
+            }
+        }
+
+        echo "<tr>";
+        echo "<td><a href='$link'>$productID</a></td>";
+        echo "<td>$quantity</td>";
+        echo "</tr>";
+    }
+
+    echo "</table>";
 } else {
     echo "<p>Order not found.</p>";
 }

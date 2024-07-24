@@ -1,0 +1,116 @@
+-- Number of items sold for all products
+drop table if exists #sales
+SELECT p.productID, SUM(coalesce(od.count,0)) numSold,
+	CAST(SUM(COALESCE(od.count,0)) * 1.0 / MAX(SUM(COALESCE(od.count,0))) OVER () AS DECIMAL(10,5)) AS normNumSold
+into #sales
+FROM products p 
+left join orderDetails od on p.productID = od.productID
+group by p.productID;
+
+-- Average rating of all products
+drop table if exists #ratings
+SELECT p.productID, 
+	SUM(coalesce(r.rating,0)) totrat, 
+    count(r.productID) numRat,
+    COALESCE(SUM(COALESCE(r.rating,0)) * 1.0 / NULLIF(COUNT(r.productID), 0), 0) AS aveRating,
+    CAST(COALESCE(SUM(COALESCE(r.rating,0)) * 1.0 / NULLIF(COUNT(r.productID), 0) / MAX(SUM(COALESCE(r.rating,0)) * 1.0 / NULLIF(COUNT(r.productID), 0)) OVER (), 0) AS DECIMAL(10,5)) AS normAveRating
+--into #ratings
+FROM products p 
+left join reviews r on p.productID = r.productID
+group by p.productID;
+
+-- Number of returns for all products 
+-- (assuming one can only return a product if they have placed order 
+-- on the product)
+DROP TABLE IF EXISTS #returnrates;
+SELECT p.productID, 
+       COALESCE(SUM(returns.numReturned),0) AS numReturned, 
+       COALESCE(totReturn,0) AS totReturn,
+       COALESCE(CAST(SUM(returns.numReturned) * 1.0 / NULLIF(totReturn, 0) AS DECIMAL(5,4)), 0.0000) AS returnRate,
+       CAST(COALESCE(SUM(returns.numReturned) * 1.0 / NULLIF(totReturn, 0) / MAX(SUM(returns.numReturned) * 1.0 / NULLIF(totReturn, 0)) OVER (), 0) AS DECIMAL(10,5)) AS normReturnRate
+INTO #returnrates
+FROM products p 
+LEFT JOIN (
+    SELECT returns.orderID, od.productID, COALESCE(SUM(od.count),0) AS numReturned
+    FROM orderDetails od 
+    LEFT JOIN (
+        SELECT o.orderID, COUNT(return.orderID) AS ifReturned
+        FROM orders o 
+        LEFT JOIN returnedOrders return ON o.orderID = return.orderID
+        GROUP BY o.orderID
+    ) returns ON returns.orderID = od.orderID 
+    WHERE ifReturned = 1
+    GROUP BY returns.orderID, od.productID
+) returns ON p.productID = returns.productID
+CROSS JOIN (
+    -- Total number of items returned
+    SELECT SUM(numReturned) AS totReturn
+    FROM (
+        SELECT returns.orderID, od.productID, COALESCE(SUM(od.count),0) AS numReturned
+        FROM orderDetails od 
+        LEFT JOIN (
+            SELECT o.orderID, COUNT(return.orderID) AS ifReturned
+            FROM orders o 
+            LEFT JOIN returnedOrders return ON o.orderID = return.orderID
+            GROUP BY o.orderID
+        ) returns ON returns.orderID = od.orderID 
+        WHERE ifReturned = 1
+        GROUP BY returns.orderID, od.productID
+    ) AS returnedProducts
+) AS tot
+GROUP BY p.productID;
+
+----------------------------------------
+-- Compute weighted score S for all products (and rank them)
+DROP TABLE IF EXISTS #defaultrank;
+SELECT p.productID,
+       CAST((0.5 * s.normNumSold + 0.3 * r.normAveRating + 0.2 * ret.normReturnRate) AS DECIMAL(10,5)) AS Score
+INTO #defaultrank
+FROM products p
+LEFT JOIN #sales s ON s.productID = p.productID
+LEFT JOIN #ratings r ON r.productID = p.productID
+LEFT JOIN #returnrates ret ON ret.productID = p.productID
+GROUP BY p.productID
+ORDER BY Score DESC;
+
+----------------------------------------
+-- Find out if the customer has placed any order, if yes:
+-- check if they have purchased a product with the same CATEGORY, 
+-- COLOR, or similar NAME. Then calculate their personalized score P
+-- for each product. 
+DROP TABLE IF EXISTS #purchase;
+SELECT c.customerID, 
+       p.productID, 
+       cat.category, 
+       cat.categorytype, 
+       IF(col.colorName LIKE '%/%', 
+          LEFT(col.colorName, CHARINDEX('/', col.colorName)-1),
+          col.colorName) AS color,
+       CASE WHEN EXISTS (
+                SELECT 1
+                FROM orders o
+                JOIN orderDetails od ON o.orderID = od.orderID
+                JOIN products p2 ON od.productID = p2.productID
+                JOIN productCategories cat2 ON p2.productID = cat2.productID
+                WHERE o.customerID = c.customerID
+                  AND EXISTS (
+                      SELECT 1
+                      FROM productCategories cat3
+                      WHERE cat3.productID = p.productID
+                        AND (cat3.category = cat2.category OR cat3.categorytype = cat2.categorytype)
+                  )
+            )
+            THEN CAST((0.4 * s.normNumSold + 0.3 * r.normAveRating + 0.2 * ret.normReturnRate + 0.1) AS DECIMAL(10,5)) -- Adjusted score if match found
+            ELSE CAST((0.5 * s.normNumSold + 0.3 * r.normAveRating + 0.2 * ret.normReturnRate) AS DECIMAL(10,5)) -- Default score
+       END AS CustomerScore
+INTO #purchase
+FROM products p 
+LEFT JOIN orderDetails od ON od.productID = p.productID
+LEFT JOIN orders o ON o.orderID = od.orderID
+LEFT JOIN customers c ON c.customerID = o.customerID
+LEFT JOIN productCategories cat ON cat.productID = p.productID
+LEFT JOIN productColors col ON col.articleID = p.productID
+LEFT JOIN #sales s ON s.productID = p.productID
+LEFT JOIN #ratings r ON r.productID = p.productID
+LEFT JOIN #returnrates ret ON ret.productID = p.productID
+GROUP BY c.customerID, p.productID, cat.category, cat.categorytype, col.colorName;

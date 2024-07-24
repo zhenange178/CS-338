@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Define credentials
     $credentials = [
-        'admin' => 'Mima1dao8'
+        'admin' => '12345678'
     ];
     // Dynamically add user IDs from 100000 to 100100
     for ($i = 100000; $i <= 100100; $i++) {

@@ -196,14 +196,34 @@ if (isset($_GET['id'])) {
         <!-- Categories, colors, and other information to follow. -->
     </div>
 </div>
-<!-- <div style="margin-left:auto;">
+<div style="margin-left:auto;">
     <br /><br/>
-<form method="post" action="">
-    <label for="quantity">Quantity:</label>
-    <input type="number" name="quantity" id="quantity" required min="1">
-    <button type="submit">Add to Cart</button>
-</form>
-</div> -->
+    <form method="post">
+        <label>Quantity: <input type="number" name="count"></label><br><br/>
+        <button type="submit" name="add_cart">Add to Cart</button>
+    </form>
+</div>
+
+<?php
+// Handle form submission to add product to cart
+if (isset($_POST['add_cart'])) {
+    if (!isset($_SESSION['userID'])) {
+        echo "You need to be logged in to add items to the cart.";
+        exit();
+    }
+    $userID = $_SESSION['userID'];
+    if (isset($_POST['count'])){
+        $count = $_POST['count'];
+
+        $sqlAddToCart = "INSERT INTO cart (customerID, productID, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE count = count + VALUES(count)";
+        $stmt = $conn->prepare($sqlAddToCart);
+        $stmt->bind_param("iii", $userID, $productId, $count);
+        $stmt->execute();
+
+        echo "Item added to cart successfully!";
+    }
+}
+?>
 
 
 <h2>Reviews (<?php echo (count($reviews) + count($myReviews))?>)</h2>
@@ -375,41 +395,6 @@ foreach ($reviews as $review) {
     echo $review['comment'] . "<br/><br/><br/>";
 }
 
-// Handle form submission to add product to cart
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['quantity'])) {
-    if (!isset($_SESSION['userID'])) {
-        echo "You need to be logged in to add items to the cart.";
-        exit();
-    }
-
-    $userID = $_SESSION['userID'];
-    $quantity = intval($_POST['quantity']);
-
-    if ($colorId) {
-        // Check if color exists
-        $sqlCheckColor = "SELECT productID FROM productColors WHERE articleID = ?";
-        $stmt = $conn->prepare($sqlCheckColor);
-        $stmt->bind_param("i", $colorId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $colorRow = $result->fetch_assoc();
-            $productId = $colorRow['productID'];
-        } else {
-            echo "Invalid color ID.";
-            exit();
-        }
-    }
-
-    // Add to cart
-    $sqlAddToCart = "INSERT INTO cart (customerID, productID, quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
-    $stmt = $conn->prepare($sqlAddToCart);
-    $stmt->bind_param("iii", $userID, $productId, $quantity);
-    $stmt->execute();
-
-    echo "Item added to cart successfully!";
-}
 ?>
 <?php endif; ?>
 

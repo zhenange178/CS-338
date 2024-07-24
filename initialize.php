@@ -63,7 +63,7 @@
     }
     ?>
     <br/><br/>
-    <a href="init/database.php" class="initbutton buttonGreen">Reset Database</a> <!--update link-->
+    <a href="init/database.php" class="initbutton buttonGreen">Reset Database</a> 
     <br/><br/>
 </div>
 <div class="divider"></div>

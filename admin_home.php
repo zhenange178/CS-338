@@ -44,12 +44,20 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
 <div style="border: 1px solid black; padding: 5px; width: 50%;">
 <b>Contents</b>
 <ul>
+    <li><a href="#analysis">Product Analytics</a></li>
     <li><a href="#promocode">Top 10 Promo Codes</a></li>
     <li><a href="#outofstock">Out of Stock Items</a></li>
     <li><a href="#bestcustomer">Most Popular Customer</a></li>
     <li><a href="#histograms">Other Analytics</a></li>
 </ul>
 </div>
+<section id="analysis">
+    <h2>Product Analysis Dashboard</h2>
+    Click below to view detailed analytics of all products using our own algorithm. 
+    <br/><br/>
+    <a href="admin_product_analysis.php" class="initbutton buttonGreen">Product Analysis Dashboard</a>
+    <br/><br/>
+</section>
 
 <section id="promocode">
 <div>

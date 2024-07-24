@@ -1,11 +1,11 @@
 <?php
 session_start();
-if (!isset($_SESSION['role'])) {
+if (!isset($_SESSION['userID'])) {
     header("Location: login.php");
     exit();
 }
 
-$role = $_SESSION['role'];
+$userID = $_SESSION['userID'];
 ?>
 
 <?php include 'includes/header.php'; ?>

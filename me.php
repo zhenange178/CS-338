@@ -2,14 +2,16 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['role'])) {
+if (!isset($_SESSION['userID'])) {
     header("Location: /");
     exit();
 }
+$userID = $_SESSION['userID'];
 ?>
 
 <?php include 'includes/header.php'; ?>
 <?php
+$userID = $_SESSION['userID'];
 $servername = "127.0.0.1";
 $username = "user1";
 $password = "password";
@@ -29,8 +31,8 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// SQL: select the user's customer entry (100000)
-$sql = "SELECT * FROM customers WHERE customerID = 100000";
+// SQL: select the user's customer entry
+$sql = "SELECT * FROM customers WHERE customerID = " . $userID;
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -47,13 +49,8 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
 <h2>User Information</h2>
 
 <form method="post">
-    <input type="hidden" name="customerID" value="<?php echo $customer['customerID']; ?>">
     <?php
-        if ($_SESSION['role'] == 'admin'){
-            echo 'ID: 999999 (admin)';
-        } else {
-            echo 'ID: 100000';
-        }
+        echo "ID: " . $userID;
     ?>
     <br/>
     
@@ -80,7 +77,7 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
 
 <?php
 if (isset($_POST['save'])) {
-    $id = $_POST['customerID'];
+    $id = $userID;
     $firstName = $_POST['fname'];
     $lastName = $_POST['lname'];
     $email = $_POST['email'];

@@ -9,13 +9,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Define credentials
     $credentials = [
-        'admin' => 'Mima1dao8',
-        '100000' => '12345678'
+        'admin' => 'Mima1dao8'
     ];
+    // Dynamically add user IDs from 100000 to 100100
+    for ($i = 100000; $i <= 100100; $i++) {
+        $credentials[(string)$i] = '12345678';
+    }
 
     // Check credentials
     if (isset($credentials[$username]) && $credentials[$username] == $password) {
-        $_SESSION['role'] = $username == 'admin' ? 'admin' : 'user';
+        $_SESSION['userID'] = $username == 'admin' ? 999999 : $username;
         header("Location: /");
         exit();
     } else {

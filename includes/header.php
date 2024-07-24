@@ -2,7 +2,11 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-$role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest';
+if (!isset($_SESSION['userID'])) {
+    header("Location: /");
+    exit();
+}
+$userID = $_SESSION['userID'];
 ?>
 
 
@@ -16,7 +20,7 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest';
 <body>
     <header class="header-nav">
         <?php 
-            if ($role == 'user' || $role == 'admin') {
+            if (($userID >= 100000 and $userID <= 100100) || $userID == 999999) {
         ?>
         <ul>
             <li><a href="/">Home</a></li>
@@ -24,7 +28,7 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest';
             <li><a href="/products.php">Products</a></li>
             <li style="float:right"><a href="/me.php">My Account</a></li>
             <?php
-                if ($role == 'admin') {
+                if ($userID == 999999) {
             ?>
             <li style="float:right"><a href="/admin_home.php">Admin Home</a></li>
             <?php

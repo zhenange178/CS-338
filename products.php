@@ -113,9 +113,9 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
     </form><br/>
 
     <?php
-    // Search form
+    // Script to procces the above search form
     if (isset($_POST['submit_search'])) {
-        // Retrieve form data
+        // Retrieve form data and store in arrys
         $name = $_POST['name'] ?? '';
         $id = $_POST['id'] ?? '';
         $attribute = $_POST['attribute'] ?? 'all_attribute';

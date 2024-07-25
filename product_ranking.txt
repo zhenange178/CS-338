@@ -61,26 +61,12 @@ CROSS JOIN (
 GROUP BY p.productID;
 
 ----------------------------------------
--- Compute weighted score S for all products (and rank them)
-DROP TABLE IF EXISTS #defaultrank;
-SELECT p.productID,
-       CAST((0.5 * s.normNumSold + 0.3 * r.normAveRating + 0.2 * (1-ret.normReturnRate)) AS DECIMAL(10,5)) AS Score
-INTO #defaultrank
-FROM products p
-LEFT JOIN #sales s ON s.productID = p.productID
-LEFT JOIN #ratings r ON r.productID = p.productID
-LEFT JOIN #returnrates ret ON ret.productID = p.productID
-GROUP BY p.productID
-ORDER BY Score DESC;
-
-----------------------------------------
 -- Find out if the customer has placed any order, if yes:
 -- check if they have purchased a product with the same CATEGORY, 
 -- COLOR, or similar NAME. Then calculate their personalized score P
 -- for each product. 
 DROP TABLE IF EXISTS #purchase;
-SELECT c.customerID, 
-       p.productID, 
+SELECT p.productID, 
        cat.category, 
        cat.categorytype, 
        IF(col.colorName LIKE '%/%', 
@@ -113,4 +99,17 @@ LEFT JOIN productColors col ON col.articleID = p.productID
 LEFT JOIN #sales s ON s.productID = p.productID
 LEFT JOIN #ratings r ON r.productID = p.productID
 LEFT JOIN #returnrates ret ON ret.productID = p.productID
-GROUP BY c.customerID, p.productID, cat.category, cat.categorytype, col.colorName;
+WHERE c.CustomerID = 110001
+GROUP BY p.productID, cat.category, cat.categorytype, col.colorName
+ORDER BY CustomerScore;
+
+
+----------------------------------------
+-- Final table to display:
+DROP TABLE IF EXISTS #ranking;
+SELECT TOP 10 p.productID,p.productName
+INTO #ranking
+FROM #purchase pc
+LEFT JOIN ( 
+	SELECT productID, productName FROM products
+) p ON p.productID = pc.productID

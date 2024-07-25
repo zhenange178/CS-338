@@ -221,7 +221,7 @@ if ($result->num_rows > 0) {
     }
 
     echo "</table>";
-    echo "<p>Grand Total: $" . number_format($orderTotal, 2) . "</p>";
+    echo "<p><big>Total: $" . number_format($orderTotal, 2) . "</big></p>";
 } else {
     echo "<p>Your cart is empty.</p><br/><br/>";
 }
@@ -296,11 +296,11 @@ function applyDiscount($promo, $orderTotal) {
     if ($promo['discountType'] == 'amount_off' && $orderTotal > $promo['restrictionAmount']) {
         $discountAmount = $promo['discountAmount'];
         $newTotal = $orderTotal - $discountAmount;
-        echo "<p>Promo code applied! You've saved $$discountAmount. Your new total is: <br/><big>$$newTotal</big></p>";
+        echo "<p>Promo code applied! Your new total is: <br/><big>$" . number_format($newTotal, 2) . "</big></p>";
     } elseif ($promo['discountType'] == 'percent_off' && $orderTotal < $promo['restrictionAmount']) {
         $discountAmount = ($promo['discountAmount'] / 100) * $orderTotal;
         $newTotal = $orderTotal - $discountAmount;
-        echo "<p>Promo code applied! You've saved $discountAmount%. Your new total is: <br/><big>$$newTotal</big>.</p>";
+        echo "<p>Promo code applied! Your new total is: <br/><big>$" . number_format($newTotal, 2) . "</big></p>";
     } else {
         echo "<p>Promo code cannot be applied to this order.</p>";
     }

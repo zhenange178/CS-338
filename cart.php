@@ -141,15 +141,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
 
 // Display the cart
 echo "<h2>Your Cart</h2>";
-echo "<form method='post' action=''><button type='submit' class='remove-button' name='remove_product'>Empty Cart</button></form><br/>";
+echo "<form method='post' action=''><button type='submit' class='remove-button' name='remove_all'>Empty Cart</button></form><br/>";
 $orderTotal = 0;
-$sql = "SELECT p.productID, p.productName, c.count
-        FROM cart c
-        JOIN productColors pc ON c.productID = pc.articleID
-        JOIN products p ON pc.productID = p.productID
-        WHERE c.customerID = ?";
 
-// Prepare and execute the statement
+// Fetch the cart data
+$sql = "SELECT productID, count FROM cart WHERE customerID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userID);
 $stmt->execute();
@@ -157,52 +153,41 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {   
     echo "<table border='1'>";
-    echo "<tr><th>Product/Article ID</th><th>Product Name</th><th>Quantity</th><th>Unit Price</th><th>Total Price</th></tr>";
-    
-    $orderTotal = 0; // Initialize orderTotal if not already done
+    echo "<tr><th>Product/Article ID</th><th>Product Name</th><th>Quantity</th><th>Unit Price</th><th>Total Price</th><th>Action</th></tr>";
 
     while ($row = $result->fetch_assoc()) {
-        $artID = $row['productID'];
-        
-        // Store the cart details in separate variables
         $cartProductID = $row['productID'];
-        $cartProductName = $row['productName'];
-        $cartCount = intval($row['count']); // Ensure count is an integer
+        $cartArticleID = $row['productID'];
+        $cartCount = intval($row['count']); 
 
-        // Fetch the parent product ID
-        $stmt = $conn->prepare("SELECT productID FROM products WHERE productID = ?");
+        // Check productColors table for the articleID
+        $stmt = $conn->prepare("SELECT productID FROM productColors WHERE articleID = ?");
+        $stmt->bind_param("i", $cartProductID);
+        $stmt->execute();
+        $colorResult = $stmt->get_result();
+
+        if ($colorResult->num_rows > 0) {
+            $colorRow = $colorResult->fetch_assoc();
+            $cartProductID = $colorRow['productID'];
+        }
+
+        // Fetch product name
+        $stmt = $conn->prepare("SELECT productName FROM products WHERE productID = ?");
         $stmt->bind_param("i", $cartProductID);
         $stmt->execute();
         $productResult = $stmt->get_result();
-
         if ($productResult->num_rows > 0) {
-            // Product ID exists in products table
-            $id = $cartProductID;
+            $productRow = $productResult->fetch_assoc();
+            $cartProductName = $productRow['productName'];
         } else {
-            // Product ID does not exist, check in productColors table
-            $stmt = $conn->prepare("SELECT productID FROM productColors WHERE articleID = ?");
-            $stmt->bind_param("i", $cartProductID);
-            $stmt->execute();
-            $colorResult = $stmt->get_result();
-            
-            if ($colorResult->num_rows > 0) {
-                // Article ID exists, fetch associated productID
-                $colorRow = $colorResult->fetch_assoc();
-                $id = $colorRow['productID'];
-            } else {
-                // If no product found, skip this iteration
-                continue;
-            }
+            // If no product name found, set a default
+            $cartProductName = "Unknown Product";
         }
 
         // Fetch the correct price
-        $sql = "SELECT price 
-        FROM productPrices 
-        WHERE productID = ?";
-
-        // Prepare and execute the statement
+        $sql = "SELECT price FROM productPrices WHERE productID = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $id);
+        $stmt->bind_param("i", $cartProductID);
         $stmt->execute();
         $priceResult = $stmt->get_result();
 
@@ -224,12 +209,14 @@ if ($result->num_rows > 0) {
         $productTotal = $price * $cartCount;
         $orderTotal += $productTotal;
 
+        // Display the product details in the table
         echo "<tr>";
-        echo "<td>" . $artID . "</td>";
+        echo "<td><a href='product.php?id=" . $cartProductID . "&color=" . $cartArticleID . "'>" . $cartArticleID . "</a></td>";
         echo "<td>" . $cartProductName . "</td>";
         echo "<td>" . $cartCount . "</td>";
         echo "<td>$" . number_format($price, 2) . "</td>";
-        echo "<td>$" . number_format($productTotal, 2) . "</td>"; // Display total for this product
+        echo "<td>$" . number_format($productTotal, 2) . "</td>";
+        echo "<td><form method='post' action=''><button type='submit' class='remove-button' name='remove_product' value='" . $cartArticleID . "'>Remove</button></form></td>";
         echo "</tr>";
     }
 
@@ -241,11 +228,26 @@ if ($result->num_rows > 0) {
 
 // Remove product from cart
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['remove_product'])) {
-
     $productID = intval($_POST['remove_product']);
-    $conn->query("DELETE FROM cart WHERE customerID = $userID");
-    // header("Location: cart.php");
-    // exit();
+    if ($conn->query("DELETE FROM cart WHERE customerID = $userID AND productID = $productID") === TRUE) {
+        echo "<p>Product removed successfully.</p>";
+    } else {
+        echo "<p>Error removing product: " . $conn->error . "</p>";
+    }
+    header("Location: cart.php");
+    exit();
+}
+
+//Empty cart
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['remove_all'])) {
+    $productID = intval($_POST['remove_product']);
+    if ($conn->query("DELETE FROM cart WHERE customerID = $userID") === TRUE) {
+        echo "<p>Cart emptied.</p>";
+    } else {
+        echo "<p>Error emptying cart: " . $conn->error . "</p>";
+    }
+    header("Location: cart.php");
+    exit();
 }
 ?>
 

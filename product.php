@@ -198,7 +198,7 @@ if (isset($_GET['id'])) {
 </div>
 <div style="margin-left:auto;">
     <br /><br/>
-    <form method="post">
+    <form method="post" class="fancyform" style="text-align:right">
         <label>Quantity: <input type="number" name="count"></label><br><br/>
         <button type="submit" name="add_cart">Add to Cart</button>
     </form>

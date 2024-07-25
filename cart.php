@@ -50,11 +50,72 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
 
 <h2>Add Product to Cart</h2>
 
-<form method="post" action="">
+<form method="post" action="" class="fancyform">
     <label>Product ID: <input type="number" name="productID" required></label><br>
     <label>Quantity: <input type="number" name="quantity" required></label><br>
     <button type="submit" name="add_product">Add Item</button>
 </form>
+
+<style>
+    /* General styling for the page */
+    /* Header styling */
+    h1, h2 {
+        color: #333;
+    }
+
+    .place-order-button {
+            background-color: #FF6600;
+            color: white; 
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .place-order-button:hover {
+            background-color: #CC5200; 
+        }
+
+        .remove-button {
+            background-color: #FF4C4C; /* Base color: Light red */
+            color: white; /* Text color */
+            border: none;
+            padding: 8px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition */
+            border-radius: 4px; /* Optional: rounded corners */
+        }
+        .remove-button:hover {
+            background-color: #FF1A1A; /* Darker red on hover */
+        }
+
+    /* Table styling */
+    table {
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f4f4f4;
+        color: #333;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Cart empty message styling */
+    .empty-cart {
+        color: #888;
+        font-style: italic;
+    }
+</style>
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
@@ -80,6 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
 
 // Display the cart
 echo "<h2>Your Cart</h2>";
+$orderTotal = 0;
 $sql = "SELECT p.productID, p.productName, c.count
         FROM cart c
         JOIN productColors pc ON c.productID = pc.articleID
@@ -92,20 +154,98 @@ $stmt->bind_param("i", $userID);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($result->num_rows > 0) {
+if ($result->num_rows > 0) {   
     echo "<table border='1'>";
-    echo "<tr><th>Product/Article ID</th><th>Product Name</th><th>Quantity</th><th>Action</th></tr>";
+    echo "<tr><th>Product/Article ID</th><th>Product Name</th><th>Quantity</th><th>Unit Price</th><th>Total Price</th><th>Action</th></tr>";
+    
+    $orderTotal = 0; // Initialize orderTotal if not already done
+
     while ($row = $result->fetch_assoc()) {
+        // Store the cart details in separate variables
+        $cartProductID = $row['productID'];
+        $cartProductName = $row['productName'];
+        $cartCount = intval($row['count']); // Ensure count is an integer
+
+        // Fetch the parent product ID
+        $stmt = $conn->prepare("SELECT productID FROM products WHERE productID = ?");
+        $stmt->bind_param("i", $cartProductID);
+        $stmt->execute();
+        $productResult = $stmt->get_result();
+
+        if ($productResult->num_rows > 0) {
+            // Product ID exists in products table
+            $id = $cartProductID;
+        } else {
+            // Product ID does not exist, check in productColors table
+            $stmt = $conn->prepare("SELECT productID FROM productColors WHERE articleID = ?");
+            $stmt->bind_param("i", $cartProductID);
+            $stmt->execute();
+            $colorResult = $stmt->get_result();
+            
+            if ($colorResult->num_rows > 0) {
+                // Article ID exists, fetch associated productID
+                $colorRow = $colorResult->fetch_assoc();
+                $id = $colorRow['productID'];
+            } else {
+                // If no product found, skip this iteration
+                continue;
+            }
+        }
+
+        // Fetch the correct price
+        $sql = "SELECT price, priceType 
+                FROM productPrices 
+                WHERE productID = ?";
+
+        // Prepare and execute the statement
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $priceResult = $stmt->get_result();
+
+        $redPriceFound = false;
+        $price = 0;
+
+        // Fetch and process the results
+        while ($priceRow = $priceResult->fetch_assoc()) {
+            if ($priceRow['priceType'] == 'redPrice') {
+                // Use redPrice if available
+                $price = floatval($priceRow['price']); // Ensure price is a float
+                $redPriceFound = true;
+                break; // Exit the loop since redPrice is found
+            }
+        }
+
+        // If no redPrice found, use whitePrice
+        if (!$redPriceFound) {
+            // Reset the result pointer to fetch again
+            $priceResult->data_seek(0);
+            while ($priceRow = $priceResult->fetch_assoc()) {
+                if ($priceRow['priceType'] == 'whitePrice') {
+                    $price = floatval($priceRow['price']); // Ensure price is a float
+                    break; // Exit the loop since whitePrice is found
+                }
+            }
+        }
+
+        // Calculate total for this product
+        $productTotal = $price * $cartCount;
+        $orderTotal += $productTotal;
+
         echo "<tr>";
-        echo "<td>" . $row['productID'] . "</td>";
-        echo "<td>" . $row['productName'] . "</td>";
-        echo "<td>" . $row['count'] . "</td>";
-        echo "<td><form method='post' action=''><button type='submit' name='remove_product' value='" . $row['productID'] . "'>Remove</button></form></td>";
+        echo "<td>" . $cartProductID . "</td>";
+        echo "<td>" . $cartProductName . "</td>";
+        echo "<td>" . $cartCount . "</td>";
+        echo "<td>$" . number_format($price, 2) . "</td>";
+        echo "<td>$" . number_format($productTotal, 2) . "</td>"; // Display total for this product
+        echo "<td><form method='post' action=''><button type='submit' class='remove-button' name='remove_product' value='" . $cartProductID . "'>Remove</button></form></td>";
         echo "</tr>";
     }
+
     echo "</table>";
+    echo "<p>Grand Total: $" . number_format($orderTotal, 2) . "</p>";
 } else {
-    echo "<p>Your cart is empty.</p>";
+    echo "<p>Your cart is empty.</p><br/><br/>";
 }
 
 // Remove product from cart
@@ -114,6 +254,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['remove_product'])) {
     $conn->query("DELETE FROM cart WHERE customerID = $userID AND productID = $productID");
     header("Location: place_order.php");
     exit();
+}
+?>
+
+<h2>Apply Promo Code</h2>
+
+<form method="post" action="" class="fancyform">
+    <label>Promo Code: <input type="text" name="promoCode" required></label><br>
+    <button type="submit" name="apply_promo">Apply Promo Code</button>
+</form>
+
+<?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['apply_promo'])) {
+    $promoCode = $conn->real_escape_string($_POST['promoCode']);
+
+    // Check if the promo code exists and is available
+    $stmt = $conn->prepare("SELECT * FROM promoCodes WHERE promoCode = ? AND totalAvailable > 0");
+    $stmt->bind_param("s", $promoCode);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows === 0) {
+        echo "<p>Promo code not valid.</p>";
+    } else {
+        $promo = $result->fetch_assoc();
+        
+        // Check if the promo code is member-only
+        if ($promo['isMemberOnly'] == 1) {
+            $stmt = $conn->prepare("SELECT * FROM memberships WHERE customerID = ?");
+            $stmt->bind_param("i", $userID);
+            $stmt->execute();
+            $membershipResult = $stmt->get_result();
+            
+            if ($membershipResult->num_rows === 0) {
+                echo "<p>This promo code is for membership-holders only.</p>";
+            } else {
+                applyDiscount($promo, $orderTotal);
+            }
+        } else {
+            applyDiscount($promo, $orderTotal);
+        }
+    }
+}
+
+function applyDiscount($promo, $orderTotal) {
+    global $conn;
+    if ($promo['discountType'] == 'amount_off' && $orderTotal > $promo['restrictionAmount']) {
+        $discountAmount = $promo['discountAmount'];
+        $newTotal = $orderTotal - $discountAmount;
+        echo "<p>Promo code applied! You've saved $$discountAmount. Your new total is $$newTotal.</p>";
+    } elseif ($promo['discountType'] == 'percent_off' && $orderTotal < $promo['restrictionAmount']) {
+        $discountAmount = ($promo['discountAmount'] / 100) * $orderTotal;
+        $newTotal = $orderTotal - $discountAmount;
+        echo "<p>Promo code applied! You've saved $discountAmount%. Your new total is $$newTotal.</p>";
+    } else {
+        echo "<p>Promo code cannot be applied to this order.</p>";
+    }
 }
 
 // Place the order
@@ -148,10 +344,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['place_order'])) {
 }
 ?>
 
-<h2>Place Order</h2>
-
-<form method="post" action="">
-    <button type="submit" name="place_order">Place Order</button>
+<form method="post" action="" style="text-align: right;">
+    <button type="submit" name="place_order" class="place-order-button"><big><b>Place Order</b></big></button>
 </form>
 
 <?php $conn->close(); ?>

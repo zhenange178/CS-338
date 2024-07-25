@@ -118,3 +118,41 @@ body {
 .buttonGreen:hover {
   background-color: #008C8C; 
 }
+
+
+    /* Form styling */
+    .fancyform {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+  }
+
+  .fancyform label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+  }
+
+  .fancyform input[type="number"], form input[type="text"] {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+  }
+
+  .fancyform button {
+      padding: 10px;
+      font-size: 16px;
+      background-color: #0052CC;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+
+  .fancyform button:hover {
+      background-color: #0041A6;
+  }

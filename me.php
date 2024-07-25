@@ -95,6 +95,64 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
     }
 </style>
 
+<div class = "divider"></div>
+<h2>Membership</h2>
+<?php
+// Handle membership actions
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['cancel_membership'])) {
+        // Cancel membership
+        $conn->query("DELETE FROM memberships WHERE customerID = $userID");
+        echo "<p>Your membership has been canceled.</p>";
+    } elseif (isset($_POST['start_membership'])) {
+        // Start a new membership
+        $rank = intval($_POST['membership_rank']);
+        $expirationDate = date('Y-m-d', strtotime('+5 years'));
+        
+        $stmt = $conn->prepare("INSERT INTO memberships (customerID, memberRank, expirationDate, membershipPrice) VALUES (?, ?, ?, 20)");
+        $stmt->bind_param("iis", $userID, $rank, $expirationDate);
+        $stmt->execute();
+        
+        echo "<p>New membership started successfully!</p>";
+    }
+}
+
+// Fetch current membership details
+$sql = "SELECT membershipID, memberRank, expirationDate FROM memberships WHERE customerID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    // Display current membership
+    $membership = $result->fetch_assoc();
+    echo "<p>Current Membership:</p>";
+    echo "<ul>";
+    echo "<li>Membership ID: " . $membership['membershipID'] . "</li>";
+    echo "<li>Rank: " . $membership['memberRank'] . "</li>";
+    echo "<li>Expiration Date: " . $membership['expirationDate'] . "</li>";
+    echo "</ul>";
+
+    // Display cancel membership form
+    echo '<form method="post" action="">';
+    echo '<button type="submit" name="cancel_membership" style="background-color: #FF4C4C; color: white; border: none; padding: 10px 20px; cursor: pointer;">Cancel Membership</button>';
+    echo '</form>';
+} else {
+    // Display start membership form
+    echo '<p>You do not have an active membership. Select a rank to start a new membership:</p>';
+    echo '<form method="post" action="">';
+    echo '<label for="membership_rank">Membership Rank:</label>';
+    echo '<select name="membership_rank" id="membership_rank" required>';
+    for ($i = 1; $i <= 6; $i++) {
+        echo "<option value=\"$i\">Rank $i</option>";
+    }
+    echo '</select>';
+    echo '<button type="submit" name="start_membership" style="background-color: #0052CC; color: white; border: none; padding: 10px 20px; cursor: pointer;">Start Membership</button>';
+    echo '</form>';
+}
+?>
+<div class = "divider"></div>
 <?php
 // Fetch orders for the logged-in user
 $sqlOrders = "SELECT * FROM orders WHERE customerID = ?";
@@ -179,7 +237,7 @@ if (isset($_POST['save'])) {
 
 $conn->close();
 ?>
-<br/><br/><br/>
+<br/><div class = "divider"></div>
 <a href="logout.php" class="initbutton buttonRed"><b>Logout</b></a>
 <br/><br/>
 

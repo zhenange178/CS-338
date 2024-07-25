@@ -147,7 +147,7 @@ class DatabaseCreator{
 
         // Create membership Table
         $sql = "CREATE TABLE IF NOT EXISTS memberships (
-            membershipID INT PRIMARY KEY,
+            membershipID INT AUTO_INCREMENT PRIMARY KEY,
             customerID INT,
             membershipPrice FLOAT NOT NULL,
             memberRank INT NOT NULL,

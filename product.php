@@ -32,6 +32,11 @@ if ($conn->connect_error) {
 if (isset($_GET['id'])) {
     $productId = $_GET['id'];
     $colorId = isset($_GET['color']) ? intval($_GET['color']) : 0;
+    $id = $productId;
+    if ($colorId != 0){
+        $id = $colorId;
+    }
+    
     $customerID = $userID;
 
     $product = null;
@@ -212,12 +217,26 @@ if (isset($_POST['add_cart'])) {
         exit();
     }
     $userID = $_SESSION['userID'];
+
+    $sqlCreateCart = "CREATE TABLE IF NOT EXISTS cart (
+            customerID INT,
+            productID INT,
+            count INT,
+            PRIMARY KEY (customerID, productID)
+        )
+    ";
+    if ($conn->query($sqlCreateCart) === TRUE) {
+
+    } else {
+        echo "Error creating cart: " . $conn->error;
+    }
+
     if (isset($_POST['count'])){
         $count = $_POST['count'];
 
         $sqlAddToCart = "INSERT INTO cart (customerID, productID, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE count = count + VALUES(count)";
         $stmt = $conn->prepare($sqlAddToCart);
-        $stmt->bind_param("iii", $userID, $productId, $count);
+        $stmt->bind_param("iii", $userID, $id, $count);
         $stmt->execute();
 
         echo "Item added to cart successfully!";

@@ -21,7 +21,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$allTables = ['products', 'productCategories', 'productColors', 'productPrices', 'customers', 'memberships', 'orders', 'returnedOrders', 'orderDetails', 'reviews', 'promoCodes'];
+$allTables = ['products', 'productCategories', 'productColors', 'productPrices', 'customers', 'memberships', 'orders', 'returnedOrders', 'orderDetails', 'reviews', 'promoCodes', 'cart'];
 
 echo "<h1>Production Database</h1>";
 

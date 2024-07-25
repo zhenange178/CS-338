@@ -44,8 +44,8 @@ $conn->query("
 <h1>Place an Order</h1>
 
 You are now using the <b><?php echo $dbType; ?></b> database. Choose an option below: <br/><br/>
-<a href="place_order.php" class="initbutton buttonBlue">Production Data</a>
-<a href="place_order.php?data=sample" class="initbutton buttonOrange">Sample Data</a>
+<a href="cart.php" class="initbutton buttonBlue">Production Data</a>
+<a href="cart.php?data=sample" class="initbutton buttonOrange">Sample Data</a>
 <br/><br/>
 
 <h2>Add Product to Cart</h2>
@@ -141,6 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
 
 // Display the cart
 echo "<h2>Your Cart</h2>";
+echo "<form method='post' action=''><button type='submit' class='remove-button' name='remove_product'>Empty Cart</button></form><br/>";
 $orderTotal = 0;
 $sql = "SELECT p.productID, p.productName, c.count
         FROM cart c
@@ -156,11 +157,13 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {   
     echo "<table border='1'>";
-    echo "<tr><th>Product/Article ID</th><th>Product Name</th><th>Quantity</th><th>Unit Price</th><th>Total Price</th><th>Action</th></tr>";
+    echo "<tr><th>Product/Article ID</th><th>Product Name</th><th>Quantity</th><th>Unit Price</th><th>Total Price</th></tr>";
     
     $orderTotal = 0; // Initialize orderTotal if not already done
 
     while ($row = $result->fetch_assoc()) {
+        $artID = $row['productID'];
+        
         // Store the cart details in separate variables
         $cartProductID = $row['productID'];
         $cartProductName = $row['productName'];
@@ -193,9 +196,9 @@ if ($result->num_rows > 0) {
         }
 
         // Fetch the correct price
-        $sql = "SELECT price, priceType 
-                FROM productPrices 
-                WHERE productID = ?";
+        $sql = "SELECT price 
+        FROM productPrices 
+        WHERE productID = ?";
 
         // Prepare and execute the statement
         $stmt = $conn->prepare($sql);
@@ -203,29 +206,18 @@ if ($result->num_rows > 0) {
         $stmt->execute();
         $priceResult = $stmt->get_result();
 
-        $redPriceFound = false;
-        $price = 0;
+        $prices = [];
 
-        // Fetch and process the results
+        // Fetch and store all prices into an array
         while ($priceRow = $priceResult->fetch_assoc()) {
-            if ($priceRow['priceType'] == 'redPrice') {
-                // Use redPrice if available
-                $price = floatval($priceRow['price']); // Ensure price is a float
-                $redPriceFound = true;
-                break; // Exit the loop since redPrice is found
-            }
+            $prices[] = floatval($priceRow['price']); // Ensure each price is a float
         }
 
-        // If no redPrice found, use whitePrice
-        if (!$redPriceFound) {
-            // Reset the result pointer to fetch again
-            $priceResult->data_seek(0);
-            while ($priceRow = $priceResult->fetch_assoc()) {
-                if ($priceRow['priceType'] == 'whitePrice') {
-                    $price = floatval($priceRow['price']); // Ensure price is a float
-                    break; // Exit the loop since whitePrice is found
-                }
-            }
+        // Determine the lowest price from the array
+        if (!empty($prices)) {
+            $price = min($prices); // Get the minimum price
+        } else {
+            $price = 0; // Default value if no prices are found
         }
 
         // Calculate total for this product
@@ -233,12 +225,11 @@ if ($result->num_rows > 0) {
         $orderTotal += $productTotal;
 
         echo "<tr>";
-        echo "<td>" . $cartProductID . "</td>";
+        echo "<td>" . $artID . "</td>";
         echo "<td>" . $cartProductName . "</td>";
         echo "<td>" . $cartCount . "</td>";
         echo "<td>$" . number_format($price, 2) . "</td>";
         echo "<td>$" . number_format($productTotal, 2) . "</td>"; // Display total for this product
-        echo "<td><form method='post' action=''><button type='submit' class='remove-button' name='remove_product' value='" . $cartProductID . "'>Remove</button></form></td>";
         echo "</tr>";
     }
 
@@ -250,10 +241,11 @@ if ($result->num_rows > 0) {
 
 // Remove product from cart
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['remove_product'])) {
+
     $productID = intval($_POST['remove_product']);
-    $conn->query("DELETE FROM cart WHERE customerID = $userID AND productID = $productID");
-    header("Location: place_order.php");
-    exit();
+    $conn->query("DELETE FROM cart WHERE customerID = $userID");
+    // header("Location: cart.php");
+    // exit();
 }
 ?>
 
@@ -302,11 +294,11 @@ function applyDiscount($promo, $orderTotal) {
     if ($promo['discountType'] == 'amount_off' && $orderTotal > $promo['restrictionAmount']) {
         $discountAmount = $promo['discountAmount'];
         $newTotal = $orderTotal - $discountAmount;
-        echo "<p>Promo code applied! You've saved $$discountAmount. Your new total is $$newTotal.</p>";
+        echo "<p>Promo code applied! You've saved $$discountAmount. Your new total is: <br/><big>$$newTotal</big></p>";
     } elseif ($promo['discountType'] == 'percent_off' && $orderTotal < $promo['restrictionAmount']) {
         $discountAmount = ($promo['discountAmount'] / 100) * $orderTotal;
         $newTotal = $orderTotal - $discountAmount;
-        echo "<p>Promo code applied! You've saved $discountAmount%. Your new total is $$newTotal.</p>";
+        echo "<p>Promo code applied! You've saved $discountAmount%. Your new total is: <br/><big>$$newTotal</big>.</p>";
     } else {
         echo "<p>Promo code cannot be applied to this order.</p>";
     }

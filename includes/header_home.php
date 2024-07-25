@@ -14,6 +14,11 @@ if (isset($_SESSION['userID'])) {
     <meta charset="UTF-8">
     <title>H&M Project</title>
     <link rel="stylesheet" type="text/css" href="styles/global.css">
+    <style>
+        h1 {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <header class="header-nav">
@@ -41,5 +46,9 @@ if (isset($_SESSION['userID'])) {
             }
         ?>
     </header>
+    </div>
+    <div style="background-color: #f2f1f0; width: 100vw; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 250px;">
+        <h1>H&M Canada Merchandise Information Management System</h1>
+        <p><code><big>Angel Zheng, Danny He, Na Sai, William Shen, Serena Lin</big></code></p>
     </div>
     <div class="content">

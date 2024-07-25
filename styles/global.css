@@ -39,7 +39,7 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #faf9f8;
+    background-color: #f2f1f0;
     font-size: 1.2em;
   }
   
@@ -63,7 +63,7 @@ body {
     width: 100%;
     justify-content: center;
     padding: 0.5rem 1rem;
-    background-color: #faf9f8; 
+    background-color: #f2f1f0; 
     margin-top: auto;
     text-align: center;
 }

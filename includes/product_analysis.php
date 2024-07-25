@@ -287,6 +287,7 @@ $result = $conn->query($sqlRanking);
 if ($result->num_rows > 0) {
     // Start the HTML output
     echo '<section>';
+    echo "Based on your purchase history.";
     echo '<table style="width:50%;">';
     echo '<thead>';
     echo '<tr>';
@@ -299,7 +300,7 @@ if ($result->num_rows > 0) {
     // Fetch and display the results
     while ($row = $result->fetch_assoc()) {
         echo '<tr>';
-        echo '<td>' . $row['productID'] . '</td>';
+        echo '<td><a href="product.php?id=' . $row['productID'] . '">' . $row['productID'] . '</a></td>';
         echo '<td>' . $row['productName'] . '</td>';
         echo '</tr>';
     }
@@ -308,7 +309,7 @@ if ($result->num_rows > 0) {
     echo '</table>';
     echo '</section>';
 } else {
-    echo 'No results found.';
+    echo 'No recomendations based on your purchase history.';
 }
 // Close the connection
 $conn->close();

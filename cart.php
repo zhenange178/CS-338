@@ -153,7 +153,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {   
     echo "<table border='1'>";
-    echo "<tr><th>Product/Article ID</th><th>Product Name</th><th>Quantity</th><th>Unit Price</th><th>Total Price</th><th>Action</th></tr>";
+    echo "<tr><th>Article ID</th><th>Product Name</th><th>Quantity</th><th>Unit Price</th><th>Total Price</th><th>Action</th></tr>";
 
     while ($row = $result->fetch_assoc()) {
         $cartProductID = $row['productID'];

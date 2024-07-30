@@ -47,7 +47,7 @@ You are now using the <b><?php echo $dbType; ?></b> database. Choose an option b
     <li><a href="#promocode">Top 10 Promo Codes</a></li>
     <li><a href="#outofstock">Out of Stock Items</a></li>
     <li><a href="#bestcustomer">Most Popular Customer</a></li>
-    <li><a href="#histograms">Other Analytics</a></li>
+    <li><a href="#charts">Other Analytics</a></li>
 </ul>
 </div>
 
@@ -169,7 +169,7 @@ if ($result->num_rows > 0) {
 ?>
 </section>
 
-<section id="histograms">
+<section id="charts">
 <?php
 // Fetch membership ranks and count them
 $sql = "SELECT memberRank, COUNT(*) as count FROM memberships GROUP BY memberRank ORDER BY count DESC";
@@ -201,79 +201,85 @@ if ($result->num_rows > 0) {
 
 ?>
 <style>
+    .chart-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    .chart-box {
+        flex: 1;
+        min-width: 300px;
+        max-width: 45%;
+        margin: 10px;
+    }
     canvas {
-        max-width: 600px;
+        max-width: 100%;
     }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function createChart(chartId, chartType, labels, data, backgroundColor, borderColor) {
+        const ctx = document.getElementById(chartId).getContext('2d');
+        return new Chart(ctx, {
+            type: chartType,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Count',
+                    data: data,
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const memberRanks = <?php echo json_encode($memberRanks); ?>;
+        const memberCounts = <?php echo json_encode($memberCounts); ?>;
+        const returnReasons = <?php echo json_encode($returnReasons); ?>;
+        const returnCounts = <?php echo json_encode($returnCounts); ?>;
+
+        // Create charts for Member Ranks
+        createChart('memberRanksChartBar', 'bar', memberRanks, memberCounts, '#0052CC', '#003399');
+        createChart('memberRanksChartPie', 'pie', memberRanks, memberCounts, ['#0052CC', '#0077FF', '#33A1FF', '#66BBFF', '#99DDFF'], '#003399');
+
+        // Create charts for Return Analysis
+        createChart('returnReasonsChartBar', 'bar', returnReasons, returnCounts, '#E50010', '#B3000C');
+        createChart('returnReasonsChartPie', 'pie', returnReasons, returnCounts, ['#E50010', '#FF3333', '#FF6666', '#FF9999', '#FFCCCC'], '#B3000C');
+    });
+</script>
 
 <h2>Member Ranks</h2>
-<div>
-    View the most popular membership ranks.
+<div class="chart-container">
+    <div class="chart-box">
+        <canvas id="memberRanksChartBar"></canvas>
+    </div>
+    <div class="chart-box">
+        <canvas id="memberRanksChartPie"></canvas>
+    </div>
 </div>
-<canvas id="memberRanksChart"></canvas>
-<script>
-    // Data for member ranks
-    const memberRanks = <?php echo json_encode($memberRanks); ?>;
-    const memberCounts = <?php echo json_encode($memberCounts); ?>;
-
-    const ctx1 = document.getElementById('memberRanksChart').getContext('2d');
-    const memberRanksChart = new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: memberRanks,
-            datasets: [{
-                label: 'Number of Members',
-                data: memberCounts,
-                backgroundColor: '#0052CC',
-                borderColor: '#003399',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
 
 <h2>Return Analysis</h2>
-<div>
-    View the most frequent returned order reasons.
+<div class="chart-container">
+    <div class="chart-box">
+        <canvas id="returnReasonsChartBar"></canvas>
+    </div>
+    <div class="chart-box">
+        <canvas id="returnReasonsChartPie"></canvas>
+    </div>
 </div>
-<canvas id="returnReasonsChart"></canvas>
-<script>
-    // Data for return reasons
-    const returnReasons = <?php echo json_encode($returnReasons); ?>;
-    const returnCounts = <?php echo json_encode($returnCounts); ?>;
-
-    const ctx2 = document.getElementById('returnReasonsChart').getContext('2d');
-    const returnReasonsChart = new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            labels: returnReasons,
-            datasets: [{
-                label: 'Number of Returns',
-                data: returnCounts,
-                backgroundColor: '#E50010', 
-                borderColor: '#B3000C',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
 
 </section>
+
 
 <?php
 $conn->close();

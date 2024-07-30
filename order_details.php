@@ -30,8 +30,10 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+?>
+<h1> Order Details</h1>
 
-
+<?php
 $orderID = intval($_GET['id']);
 
 // Fetch customerID for the given orderID

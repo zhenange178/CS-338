@@ -333,7 +333,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['place_order'])) {
     $conn->query("DELETE FROM cart WHERE customerID = $userID");
     
     // Redirect to order details page with the newly inserted orderID
-    header("Location: order_details.php?id=$orderID");
+    if ($dbType == 'production'){
+        header("Location: order_details.php?id=$orderID");
+    } else {
+        header("Location: order_details.php?id=$orderID&data=sample");
+    }
     exit();
 }
 ?>

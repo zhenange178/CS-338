@@ -17,10 +17,12 @@ $username = "user1";
 $password = "password";
 $dbname = "hmdatabase";
 $dbType = "production";
+$urlEnd = "";
 if (isset($_GET['data'])) {
     if ($_GET['data'] === 'sample'){
         $dbname = "sampledatabase";
         $dbType = "sample";
+        $urlEnd = "&data=sample";
     }
 }
 
@@ -179,7 +181,7 @@ $reviewsResult = $stmt->get_result();
 
     <?php while ($row = $ordersResult->fetch_assoc()): ?>
     <tr>
-        <td><a href="order_details.php?id=<?php echo htmlspecialchars($row['orderID']); ?>"><?php echo htmlspecialchars($row['orderID']); ?></a></td>
+        <td><a href="order_details.php?id=<?php echo htmlspecialchars($row['orderID']); ?><?php echo $urlEnd?>"><?php echo htmlspecialchars($row['orderID']); ?></a></td>
         <td><?php echo htmlspecialchars($row['trackingID']); ?></td>
         <td><?php echo htmlspecialchars($row['orderDateTime']); ?></td>
         <td><?php echo $row['promoCodeUsed']; ?></td>

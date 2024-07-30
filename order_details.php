@@ -19,10 +19,12 @@ $username = "user1";
 $password = "password";
 $dbname = "hmdatabase";
 $dbType = "production";
+$urlEnd = "";
 
 if (isset($_GET['data']) && $_GET['data'] === 'sample') {
     $dbname = "sampledatabase";
     $dbType = "sample";
+    $urlEnd = "&data=sample";
 }
 
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -66,7 +68,6 @@ $orderResult = $stmt->get_result();
 $order = $orderResult->fetch_assoc();
 
 if ($order) {
-    echo "<h1>Order Confirmation</h1>";
     echo "<p>Order ID: " . htmlspecialchars($order['orderID']) . "</p>";
     echo "<p>Tracking ID: " . htmlspecialchars($order['trackingID']) . "</p>";
     echo "<p>Order Date: " . htmlspecialchars($order['orderDateTime']) . "</p>";
@@ -129,7 +130,31 @@ if ($order) {
 } else {
     echo "<p>Order not found.</p>";
 }
+?>
 
+<?php 
+$sqlCheckReturn = "
+SELECT returnDateTime
+FROM returnedOrders
+WHERE orderID = ?
+";
+$stmt = $conn->prepare($sqlCheckReturn);
+$stmt->bind_param("i", $orderID);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $return = $result->fetch_assoc();
+    $returnDateTime = $return['returnDateTime'];
+    echo "<p>This order has been returned on " . htmlspecialchars($returnDateTime) . ".</p>";
+} else {
+?>
+<br/><br/>
+<a href="return_order.php?id=<?php echo $orderID; ?><?php echo $urlEnd; ?>" class="initbutton buttonRed"><b>Return Order</b></a>
+<br/><br/>
+<?php } ?>
+
+<?php
 $stmt->close();
 $conn->close();
 // Include footer

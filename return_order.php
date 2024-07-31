@@ -62,8 +62,6 @@ if ($userID != $customerID){
     exit();
 }
 
-include 'includes/timer_start.php';
-
 // Retrieve order details
 $sqlOrder = "SELECT * FROM orders WHERE orderID = ?";
 $stmt = $conn->prepare($sqlOrder);
@@ -105,8 +103,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $stmt->close();
 }
-
-include 'includes/timer_end.php';
 
 ?>
 

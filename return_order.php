@@ -33,6 +33,8 @@ if ($conn->connect_error) {
 
 $orderID = intval($_GET['id']);
 
+echo "<h1> Return Order</h1>";
+
 // Fetch customerID for the given orderID
 $sqlCheckUser = "
     SELECT customerID
@@ -59,6 +61,8 @@ if ($userID != $customerID){
     header("Location: /");
     exit();
 }
+
+include 'includes/timer_start.php';
 
 // Retrieve order details
 $sqlOrder = "SELECT * FROM orders WHERE orderID = ?";
@@ -101,9 +105,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $stmt->close();
 }
-?>
 
-<h1>Order Details</h1>
+include 'includes/timer_end.php';
+
+?>
 
 <form method="POST">
     <label for="returnReason">Reason for return:</label>

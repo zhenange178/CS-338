@@ -8,6 +8,19 @@ function showTable($conn, $tableName){
     $tableDisplay->displayTable("SELECT * FROM " . $tableName);
 }
 
+// Get num rows in table
+function getRowCount($conn, $tableName) {
+    $sql = "SELECT COUNT(*) as count FROM " . $tableName;
+    $result = $conn->query($sql);
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['count'];
+    } else {
+        return 0;
+    }
+}
+
 // Database connection parameters
 $servername = "127.0.0.1";
 $username = "user1";
@@ -26,7 +39,8 @@ $allTables = ['products', 'productCategories', 'productColors', 'productPrices',
 echo "<h1>Production Database</h1>";
 
 foreach ($allTables as $table){
-    echo"<br/>" . $table . "<br/>";
+    $numRows = getRowCount($conn, $table);
+    echo"<br/>" . $table . " ({$numRows} rows)<br/>";
     showTable($conn, $table);
 }
 
